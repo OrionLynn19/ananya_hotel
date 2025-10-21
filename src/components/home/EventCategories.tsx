@@ -1,7 +1,6 @@
 "use client";
-
-import Image from "next/image";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { ComponentPropsWithoutRef } from "react";
 
 type Item = {
@@ -27,14 +26,14 @@ export default function EventCategories({
   ...rest
 }: Props) {
   return (
-    <section className={`mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 ${className}`} {...rest}>
-      <header className="mx-auto max-w-3xl text-center">
-        <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#4C331E]">{heading}</h2>
-        <p className="mt-4 text-lg leading-7 text-[#5a4734]">{subheading}</p>
+    <section className={`mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 ${className}`} {...rest}>
+      <header className="mx-auto max-w-3xl text-center mb-12">
+        <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-primary">{heading}</h2>
+        <p className="mt-4 text-lg leading-7 text-muted-foreground">{subheading}</p>
       </header>
 
-      <div className="mt-10 flex flex-nowrap justify-center gap-6 overflow-hidden">
-        {(items ?? []).map((item, i) => (
+      <div className="flex flex-nowrap justify-center gap-6 overflow-hidden">
+        {items.map((item, i) => (
           <Card key={i} {...item} />
         ))}
       </div>
@@ -43,46 +42,61 @@ export default function EventCategories({
 }
 
 function Card({ title, blurb, href = "#", imgSrc, imgAlt }: Item) {
-  const Wrapper = href ? Link : "div";
-  const wrapperProps = href ? { href } : {};
-
   return (
-    <Wrapper
-      {...(wrapperProps as any)}
-      className="group relative overflow-hidden rounded-2xl ring-1 ring-black/5 shadow-sm transition-all duration-500 ease-out
-                 h-[594px] w-[258px] basis-[18%] grow-0 shrink-0 hover:basis-[26%] hover:scale-[1.01]
-                 focus-visible:basis-[26%] focus-visible:scale-[1.01] focus:outline-none"
-      aria-label={title}
+    <motion.div
+      layout
+      className="relative overflow-hidden rounded-2xl ring-1 ring-black/5 shadow-lg h-[594px]"
+      style={{ flex: "0 0 auto", flexBasis: "18%" }}
+      initial="rest"
+      animate="rest"
+      whileHover="hover"
+      variants={{
+        rest: { scale: 1, flexBasis: "18%" },
+        hover: { scale: 1.03, flexBasis: "26%" },
+      }}
+      transition={{ type: "spring", stiffness: 260, damping: 26 }}
     >
-      <div className="relative w-full h-full">
-        <Image
-          src={imgSrc}
-          alt={imgAlt}
-          fill
-          sizes="(min-width:1024px) 25vw, (min-width:640px) 50vw, 100vw"
-          className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.05]"
-        />
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/40 to-transparent" />
-      </div>
+      <Link href={href} aria-label={title} className="block h-full w-full focus:outline-none">
+        {/* Image scales with hover */}
+        <motion.div
+          className="relative h-full w-full"
+          variants={{ rest: { scale: 1 }, hover: { scale: 1.08 } }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+        >
+          <img src={imgSrc} alt={imgAlt} className="object-cover w-full h-full" />
+        </motion.div>
 
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 p-5 transition-opacity duration-300 group-hover:opacity-0">
-        <span className="inline-block rounded-lg bg-black/35 px-4 py-2 text-2xl font-extrabold leading-none tracking-wide text-white backdrop-blur-sm">
-          {title}
-        </span>
-      </div>
+        {/* Bottom overlay: auto-fit via padding + maxHeight (no jitter) */}
+        <motion.div
+          className="absolute bottom-0 left-0 right-0 z-20 bg-black/55 backdrop-blur-sm text-white"
+          variants={{
+            rest: { paddingTop: 16, paddingBottom: 16 },
+            hover: { paddingTop: 24, paddingBottom: 24 },
+          }}
+          transition={{ duration: 0.28, ease: "easeOut" }} 
+        >
+          <div className="flex flex-col items-center justify-center text-center px-6">
+            <motion.h3
+              className="text-3xl font-extrabold leading-tight tracking-wide text-white"
+              variants={{ rest: { opacity: 1, y: 0 }, hover: { opacity: 1, y: 0 } }}
+            >
+              {title}
+            </motion.h3>
 
-      <div
-        className="absolute inset-0 z-20 grid place-items-end bg-gradient-to-t from-black/70 via-black/40 to-transparent
-                   translate-y-6 opacity-0 transition-all duration-500 ease-out
-                   group-hover:translate-y-0 group-hover:opacity-100"
-      >
-        <div className="w-full p-6 pt-10">
-          <div className="rounded-xl bg-black/55 p-5 backdrop-blur-md">
-            <h3 className="text-white text-2xl font-extrabold">{title}</h3>
-            <p className="mt-2 text-white/90 text-sm leading-6">{blurb}</p>
+            {/* Blurb container: doesn't affect layout at rest */}
+            <motion.div
+              className="overflow-hidden w-full"
+              variants={{
+                rest: { maxHeight: 0, marginTop: 0, opacity: 0, y: 6 },
+                hover: { maxHeight: 112, marginTop: 8, opacity: 1, y: 0 },
+              }}
+              transition={{ duration: 0.32, ease: "easeOut" }}
+            >
+              <p className="text-sm leading-6 text-white/90">{blurb}</p>
+            </motion.div>
           </div>
-        </div>
-      </div>
-    </Wrapper>
+        </motion.div>
+      </Link>
+    </motion.div>
   );
 }
