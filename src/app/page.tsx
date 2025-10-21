@@ -1,5 +1,11 @@
-export default function Home(){
-  return(
-    <div>This is Home Page</div>
-  )
+import EventCategoriesSection from "@/components/home/EventCategoriesSection";
+
+export default function Page() {
+  return (
+    <>
+
+      <EventCategoriesSection />
+
+    </>
+  );
 }
