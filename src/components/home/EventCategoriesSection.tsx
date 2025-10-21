@@ -15,7 +15,7 @@ export default function EventCategoriesSection() {
         {
           title: "Events",
           blurb:
-            "From seaside ceremonies to elegant banquets—meticulous planning, seamless execution.",
+            "Celebrate your special day with us. Our dedicated team ensures every detail is perfect, from beachfront ceremonies to elegant receptions.",
           imgSrc: "/images/events.jpg",
           imgAlt: "Ballroom celebration",
           href: "/events",
