@@ -1,7 +1,21 @@
 "use client";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { ComponentPropsWithoutRef } from "react";
+import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState, ComponentPropsWithoutRef } from "react";
+import { Montserrat, Poltawski_Nowy } from "next/font/google";
+
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  weight: ["400", "600", "700"],
+  display: "swap",
+});
+
+const poltawskiNowy = Poltawski_Nowy({
+  subsets: ["latin"],
+  weight: ["400", "600", "700"],
+  display: "swap",
+});
 
 type Item = {
   title: string;
@@ -25,74 +39,175 @@ export default function EventCategories({
   className = "",
   ...rest
 }: Props) {
+  const [index, setIndex] = useState(0);
+  const total = items.length;
+  const go = (i: number) => setIndex(((i % total) + total) % total);
+  const prev = () => go(index - 1);
+  const next = () => go(index + 1);
+
   return (
-    <section className={`mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 ${className}`} {...rest}>
-      <header className="mx-auto max-w-3xl text-center mb-12">
-        <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-primary">{heading}</h2>
-        <p className="mt-4 text-lg leading-7 text-muted-foreground">{subheading}</p>
+    <section className={`mx-auto max-w-7xl px-4 py-10 md:px-8 md:py-16 ${className}`} {...rest}>
+      {/* Heading */}
+      <header className="text-center mb-8 md:mb-12">
+        <h2
+          className={`text-[28px] leading-tight font-[700] text-[#463214] md:text-[48px] md:leading-[54px] ${poltawskiNowy.className}`}
+        >
+          {heading}
+        </h2>
+        <p
+          className={`mt-3 text-[16px] leading-7 font-[600] text-[#463214] md:mt-4 md:text-[32px] md:leading-[40px] ${poltawskiNowy.className}`}
+        >
+          {subheading}
+        </p>
       </header>
 
-      <div className="flex flex-nowrap justify-center gap-6 overflow-hidden">
+      {/* ----- MOBILE VIEW ----- */}
+      <div className="md:hidden">
+        <div className="relative mx-auto w-full max-w-[700px]">
+          <AnimatePresence mode="wait">
+            {total > 0 && (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, x: 40 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -40 }}
+                transition={{ duration: 0.35, ease: "easeOut" }}
+                className="rounded-2xl shadow-xl ring-1 ring-black/5 overflow-hidden"
+              >
+                {/* Image with overlay */}
+                <div className="relative w-full aspect-[3/4]">
+                  <Image
+                    fill
+                    src={items[index].imgSrc}
+                    alt={items[index].imgAlt}
+                    className="object-cover"
+                    priority
+                  />
+                  {/* black overlay */}
+                  <div className="absolute inset-0 bg-black/40 z-10" />
+
+                  {/* text overlay */}
+                  <div className="absolute inset-x-0 bottom-0 z-20 bg-black/35 backdrop-blur-xs text-white box-border px-6 py-8 min-h-[140px]">
+                    <h3
+                      className={`text-[26px] text-center font-extrabold leading-tight tracking-wide mb-3 ${poltawskiNowy.className}`}
+                    >
+                      {items[index].title}
+                    </h3>
+                    <p
+                      className={`text-[15px] leading-6 text-white/90 text-left ${montserrat.className}`}
+                    >
+                      {items[index].blurb}
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Pager */}
+          <div className="mt-6 flex items-center justify-center gap-6">
+            <button
+              onClick={prev}
+              aria-label="Previous"
+              className="text-[#6A512E] text-[28px] active:scale-95"
+            >
+              ‹
+            </button>
+
+            <div className="flex items-center gap-3">
+              {Array.from({ length: total }).map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => go(i)}
+                  aria-label={`Go to slide ${i + 1}`}
+                  className={`h-4 w-4 rounded-full transition ${
+                    i === index ? "bg-[#6A512E]" : "bg-[#CFC8BE]"
+                  }`}
+                />
+              ))}
+            </div>
+
+            <button
+              onClick={next}
+              aria-label="Next"
+              className="text-[#6A512E] text-[28px] active:scale-95"
+            >
+              ›
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* DESKTOP VIEW */}
+      <div className="hidden md:flex md:flex-nowrap md:justify-center md:gap-6 md:overflow-hidden">
         {items.map((item, i) => (
-          <Card key={i} {...item} />
+          <DesktopCard key={i} {...item} />
         ))}
       </div>
     </section>
   );
 }
 
-function Card({ title, blurb, href = "#", imgSrc, imgAlt }: Item) {
+/* Desktop Hover Card */
+function DesktopCard({ title, blurb, href = "#", imgSrc, imgAlt }: Item) {
   return (
     <motion.div
       layout
       className="relative overflow-hidden rounded-2xl ring-1 ring-black/5 shadow-lg h-[594px]"
-      style={{ flex: "0 0 auto", flexBasis: "18%" }}
-      initial="rest"
+      style={{ flex: "0 0 auto", flexBasis: "22%" }}
       animate="rest"
       whileHover="hover"
       variants={{
-        rest: { scale: 1, flexBasis: "18%" },
-        hover: { scale: 1.03, flexBasis: "26%" },
+        rest: { scale: 1, flexBasis: "22%" },
+        hover: { scale: 1.03, flexBasis: "30%" },
       }}
       transition={{ type: "spring", stiffness: 260, damping: 26 }}
     >
       <Link href={href} aria-label={title} className="block h-full w-full focus:outline-none">
-        {/* Image scales with hover */}
         <motion.div
           className="relative h-full w-full"
           variants={{ rest: { scale: 1 }, hover: { scale: 1.08 } }}
           transition={{ duration: 0.6, ease: "easeOut" }}
         >
-          <img src={imgSrc} alt={imgAlt} className="object-cover w-full h-full" />
+          <div className="absolute inset-0 bg-black/40 z-10" />
+          <Image fill src={imgSrc} alt={imgAlt} className="object-cover w-full h-full" />
         </motion.div>
 
-        {/* Bottom overlay: auto-fit via padding + maxHeight (no jitter) */}
         <motion.div
-          className="absolute bottom-0 left-0 right-0 z-20 bg-black/55 backdrop-blur-sm text-white"
+          className="absolute inset-x-0 bottom-0 z-20 bg-black/35 backdrop-blur-xs text-white box-border"
           variants={{
-            rest: { paddingTop: 16, paddingBottom: 16 },
-            hover: { paddingTop: 24, paddingBottom: 24 },
+            rest: { paddingTop: 24, paddingBottom: 24 },
+            hover: { paddingTop: 32, paddingBottom: 32 },
           }}
-          transition={{ duration: 0.28, ease: "easeOut" }} 
+          transition={{ duration: 0.3, ease: "easeOut" }}
         >
-          <div className="flex flex-col items-center justify-center text-center px-6">
+          <div className="w-full max-w-[520px] mx-auto px-8">
             <motion.h3
-              className="text-3xl font-extrabold leading-tight tracking-wide text-white"
-              variants={{ rest: { opacity: 1, y: 0 }, hover: { opacity: 1, y: 0 } }}
+              className={`text-[28px] text-center font-extrabold leading-tight tracking-wide bg-gradient-to-b from-[#FCF9F6] to-[#969492] bg-clip-text text-transparent ${poltawskiNowy.className}`}
+              variants={{
+                rest: {
+                  backgroundImage: "linear-gradient(to bottom,#FCF9F6,#969492)",
+                  WebkitBackgroundClip: "text",
+                  color: "transparent",
+                },
+                hover: { backgroundImage: "none", color: "#ffffff" },
+              }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
             >
               {title}
             </motion.h3>
 
-            {/* Blurb container: doesn't affect layout at rest */}
             <motion.div
               className="overflow-hidden w-full"
               variants={{
                 rest: { maxHeight: 0, marginTop: 0, opacity: 0, y: 6 },
-                hover: { maxHeight: 112, marginTop: 8, opacity: 1, y: 0 },
+                hover: { maxHeight: 180, marginTop: 16, opacity: 1, y: 0 },
               }}
-              transition={{ duration: 0.32, ease: "easeOut" }}
+              transition={{ duration: 0.35, ease: "easeOut" }}
             >
-              <p className="text-sm leading-6 text-white/90">{blurb}</p>
+              <p className={`text-base leading-6 text-white/90 text-left ${montserrat.className}`}>
+                {blurb}
+              </p>
             </motion.div>
           </div>
         </motion.div>
