@@ -7,7 +7,7 @@ export default function EventCategoriesSection() {
         {
           title: "Weddings",
           blurb:
-            "Beachfront vows, elegant receptions, and a dedicated team to perfect every moment.",
+            "Celebrate your special day with us. Our dedicated team ensures every detail is perfect, from beachfront ceremonies to elegant receptions.",
           imgSrc: "/images/weddings.jpg",
           imgAlt: "Beach wedding ceremony",
           href: "/events/weddings",
@@ -23,7 +23,7 @@ export default function EventCategoriesSection() {
         {
           title: "Workshops",
           blurb:
-            "Inspiring venues with ocean views, breakout spaces, and full-service catering.",
+            "Celebrate your special day with us. Our dedicated team ensures every detail is perfect, from beachfront ceremonies to elegant receptions.",
           imgSrc: "/images/workshops.jpg",
           imgAlt: "Outdoor workshop by the beach",
           href: "/events/workshops",
@@ -31,7 +31,7 @@ export default function EventCategoriesSection() {
         {
           title: "Creators",
           blurb:
-            "Picture-perfect backdrops, natural light, and production-friendly spaces.",
+            "Celebrate your special day with us. Our dedicated team ensures every detail is perfect, from beachfront ceremonies to elegant receptions.",
           imgSrc: "/images/creators.jpg",
           imgAlt: "Content creator filming brunch by the beach",
           href: "/events/creators",

@@ -1,2 +1,16 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Poltawski+Nowy:wght@400;600;700&display=swap");
 @import "tailwindcss";
 
+@theme {
+
+  --color-background: #ffffff;
+  --color-foreground: #171717;
+
+  --font-montserrat: "Montserrat", sans-serif;
+  --font-poltawski: "Poltawski Nowy", serif;
+}
+
+:root {
+  --font-montserrat: "Montserrat", sans-serif;
+  --font-poltawski: "Poltawski Nowy", serif;
+}
