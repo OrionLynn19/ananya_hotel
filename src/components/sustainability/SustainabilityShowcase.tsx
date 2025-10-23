@@ -21,17 +21,26 @@ type Props = {
   items: SustainabilityItem[];
   className?: string;
   cardHeightPx?: number;
+  cardWidthPx?: number;
   gapClass?: string;
 };
 
 const RADIUS = "rounded-[28px]";
-const DESC_TARGET_HEIGHT = 96; 
+const DESC_TARGET_HEIGHT = 96;
+
+const EMOJIS = ["🌱", "🌍", "🌊"];
+function splitFocusTitle(ft?: string) {
+  if (!ft) return { text: "", emoji: "" };
+  for (const e of EMOJIS) {
+    if (ft.includes(e)) return { text: ft.replace(e, "").trim(), emoji: e };
+  }
+  return { text: ft, emoji: "" };
+}
 
 export default function SustainabilityShowcase({
   items,
-  className = "",
-  cardHeightPx = 594,
-  gapClass = "md:gap-8",
+  cardHeightPx = 550,
+  cardWidthPx = 370,
 }: Props) {
   const [active, setActive] = useState(0);
   const gid = useId();
@@ -49,18 +58,25 @@ export default function SustainabilityShowcase({
   );
 
   return (
-    <section className={`w-full ${className}`}>
-      <div className={`hidden md:flex md:justify-center ${gapClass}`}>
+    <section className={`w-full`}>
+      <div className={`hidden md:flex md:justify-between md:gap-3`}>
         {items.map((item, i) => {
           const isActive = i === active;
           const focusCls = item.focus ?? "object-center";
+
+          const { text: focusText, emoji: focusEmoji } = splitFocusTitle(item.focusTitle);
 
           return (
             <motion.div
               key={i}
               className={`relative overflow-hidden ${RADIUS} ring-1 ring-black/5 shadow-lg`}
-              style={{ height: `${cardHeightPx}px`, flexBasis: 0, minWidth: 0 }}
-              animate={{ flexGrow: isActive ? 2.2 : 1.3 }}
+              style={{
+                height: `${cardHeightPx}px`,
+                flex: "0 0 auto",
+              }}
+              animate={{
+                width: isActive ? cardWidthPx + 100 : cardWidthPx,
+              }}
               initial={false}
               transition={{ type: "spring", stiffness: 240, damping: 26 }}
             >
@@ -84,8 +100,12 @@ export default function SustainabilityShowcase({
                 />
 
                 <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10">
-                  <motion.div className="bg-black/50 backdrop-blur-[1px]" layout transition={{ type: "spring", stiffness: 220, damping: 28 }}>
-                    <div className="mx-auto w-full max-w-[560px] px-8 py-6">
+                  <motion.div
+                    className="bg-black/50 backdrop-blur-[1px]"
+                    layout
+                    transition={{ type: "spring", stiffness: 220, damping: 28 }}
+                  >
+                    <div className="mx-auto w-full px-8 pt-4 pb-5">
                       <div className="relative overflow-hidden min-h-[36px]">
                         <AnimatePresence mode="wait" initial={false}>
                           {isActive ? (
@@ -95,9 +115,14 @@ export default function SustainabilityShowcase({
                               animate={{ opacity: 1, y: 0 }}
                               exit={{ opacity: 0, y: -12 }}
                               transition={{ duration: 0.35, ease: "easeOut" }}
-                              className={`relative text-[32px] leading-snug font-[800] tracking-wide text-white text-left md:text-center ${poltawskiNowy.className}`}
+                              className={`relative text-[32px] font-[700] text-left whitespace-nowrap ${poltawskiNowy.className}`}
                             >
-                              {item.focusTitle || item.title}
+                              <span className="text-white">
+                                {focusText || item.title}
+                              </span>
+                              {focusEmoji && (
+                                <span className="ml-2 text-white align-[-2px]">{focusEmoji}</span>
+                              )}
                             </motion.h3>
                           ) : (
                             <motion.h3
@@ -106,9 +131,11 @@ export default function SustainabilityShowcase({
                               animate={{ opacity: 1, y: 0 }}
                               exit={{ opacity: 0, y: -12 }}
                               transition={{ duration: 0.35, ease: "easeOut" }}
-                              className={`relative text-[32px] leading-snug font-[700] tracking-wide text-white text-left md:text-center ${poltawskiNowy.className}`}
+                              className={`relative text-[32px] font-[700] text-center whitespace-nowrap ${poltawskiNowy.className}`}
                             >
-                              {item.title}
+                              <span className="bg-gradient-to-b from-[#FCF9F6] to-[#969492] bg-clip-text text-transparent [-webkit-text-fill-color:transparent] [-webkit-background-clip:text]">
+                                {item.title}
+                              </span>
                             </motion.h3>
                           )}
                         </AnimatePresence>
@@ -132,10 +159,10 @@ export default function SustainabilityShowcase({
                               transition={{ duration: 0.3, ease: "easeOut" }}
                               className={`text-base leading-6 text-white/90 text-left ${montserrat.className}`}
                               style={{
-                                display: "-webkit-box",
-                                WebkitLineClamp: 3,
-                                WebkitBoxOrient: "vertical",
-                                overflow: "hidden",
+                                overflow: "visible",
+                                display: "block",
+                                WebkitLineClamp: "unset",
+                                WebkitBoxOrient: "unset",
                               }}
                             >
                               {item.blurb}
@@ -152,6 +179,7 @@ export default function SustainabilityShowcase({
         })}
       </div>
 
+      {/* --- MOBILE --- */}
       <div className="md:hidden space-y-7">
         {items.map((item, i) => (
           <div key={i} className={`relative overflow-hidden ${RADIUS} ring-1 ring-black/5 shadow-lg`}>
@@ -164,8 +192,8 @@ export default function SustainabilityShowcase({
                 priority={i === 0}
               />
             </div>
-            <div className="bg-black/50 text-white px-6 py-6">
-              <h3 className={`text-[28px] font-[800] leading-tight tracking-wide ${poltawskiNowy.className}`}>
+            <div className="bg-black/50 text-white px-3 py-6">
+              <h3 className={`text-[28px] font-[700] leading-tight ${poltawskiNowy.className}`}>
                 {item.title}
               </h3>
               <p

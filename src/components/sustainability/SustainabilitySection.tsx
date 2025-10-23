@@ -31,7 +31,7 @@ export default function SustainabilitySection() {
 ];
 
   return (
-    <section className="mx-auto max-w-7xl px-6 md:px-20 py-10 md:py-16">
+    <section className="mx-auto max-w-7xl py-10 md:py-16">
       <header className="mx-auto mb-10 md:mb-12 max-w-3xl text-center">
         <h2 className="text-[48px] leading-[54px] font-extrabold text-[#463214]">
           Sustainability at Heart
@@ -44,8 +44,8 @@ export default function SustainabilitySection() {
 
       <SustainabilityShowcase
         items={items}
-        cardHeightPx={594}
-        gapClass="md:gap-8"
+        cardHeightPx={550}
+        gapClass="md:gap-5"
       />
     </section>
   );
