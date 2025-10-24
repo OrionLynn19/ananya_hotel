@@ -2,7 +2,7 @@ import SustainabilitySection from "@/components/sustainability/SustainabilitySec
 
 export default function AboutUs() {
   return (
-    <main className="py-12">
+    <main className="py-12 bg-white">
       <SustainabilitySection />
     </main>
   );

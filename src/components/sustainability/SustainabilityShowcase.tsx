@@ -179,38 +179,101 @@ export default function SustainabilityShowcase({
         })}
       </div>
 
-      {/* --- MOBILE --- */}
-      <div className="md:hidden space-y-7">
-        {items.map((item, i) => (
-          <div key={i} className={`relative overflow-hidden ${RADIUS} ring-1 ring-black/5 shadow-lg`}>
-            <div className="relative w-full aspect-[3/4]">
-              <Image
-                fill
-                src={item.imgSrc}
-                alt={item.imgAlt}
-                className={`object-cover ${item.focus ?? "object-center"}`}
-                priority={i === 0}
-              />
+        <div className="md:hidden px-10"> 
+        {(() => {
+            const [mIndex, setMIndex] = useState(0);
+            const total = items.length;
+            const go = (i: number) => setMIndex(((i % total) + total) % total);
+            const prev = () => go(mIndex - 1);
+            const next = () => go(mIndex + 1);
+
+            return (
+            <div className="w-full">
+                <div className={`relative mx-auto w-full ${RADIUS} overflow-hidden ring-1 ring-black/5 shadow-lg`}>
+                <AnimatePresence mode="wait" initial={false}>
+                    {total > 0 && (
+                    <motion.div
+                        key={mIndex}
+                        initial={{ opacity: 0, x: 40 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -40 }}
+                        transition={{ duration: 0.35, ease: "easeOut" }}
+                        className="relative"
+                    >
+                        <motion.div
+                        className="relative w-full aspect-[3/4] overflow-hidden"
+                        drag="x"
+                        dragElastic={0.12}
+                        dragConstraints={{ left: 0, right: 0 }}
+                        onDragEnd={(_, info) => {
+                            const T = 70;
+                            if (info.offset.x < -T) next();
+                            if (info.offset.x > T) prev();
+                        }}
+                        >
+                        <Image
+                            fill
+                            priority
+                            src={items[mIndex].imgSrc}
+                            alt={items[mIndex].imgAlt}
+                            className={`object-cover ${items[mIndex].focus ?? "object-center"}`}
+                        />
+
+                        <div className="absolute inset-x-0 bottom-0 z-20 bg-black/55 backdrop-blur-[1px] px-5 py-6">
+                            <h3
+                            className={`text-[14px] font-[600] text-left text-white ${poltawskiNowy.className}`}
+                            >
+                            {items[mIndex].title}
+                            </h3>
+                            <p
+                            className={`mt-2 text-[12px] font-[500] text-white/90 text-left ${montserrat.className}`}
+                            >
+                            {items[mIndex].blurb}
+                            </p>
+                        </div>
+                        </motion.div>
+                    </motion.div>
+                    )}
+                </AnimatePresence>
+                </div>
+
+                {/* Pagination + arrows */}
+                <div className="mt-6 flex items-center justify-center gap-6">
+                <button
+                    onClick={prev}
+                    aria-label="Previous"
+                    className="text-[#6A512E] text-[28px] active:scale-95"
+                >
+                    ‹
+                </button>
+
+                <div className="flex items-center gap-3">
+                    {Array.from({ length: total }).map((_, i) => (
+                    <button
+                        key={i}
+                        onClick={() => go(i)}
+                        aria-label={`Go to slide ${i + 1}`}
+                        className={`h-4 w-4 rounded-full transition ${
+                        i === mIndex ? "bg-[#6A512E]" : "bg-[#CFC8BE]"
+                        }`}
+                    />
+                    ))}
+                </div>
+
+                <button
+                    onClick={next}
+                    aria-label="Next"
+                    className="text-[#6A512E] text-[28px] active:scale-95"
+                >
+                    ›
+                </button>
+                </div>
             </div>
-            <div className="bg-black/50 text-white px-3 py-6">
-              <h3 className={`text-[28px] font-[700] leading-tight ${poltawskiNowy.className}`}>
-                {item.title}
-              </h3>
-              <p
-                className={`mt-3 text-[15px] leading-6 text-white/90 ${montserrat.className}`}
-                style={{
-                  display: "-webkit-box",
-                  WebkitLineClamp: 3,
-                  WebkitBoxOrient: "vertical",
-                  overflow: "hidden",
-                }}
-              >
-                {item.blurb}
-              </p>
-            </div>
-          </div>
-        ))}
-      </div>
+            );
+        })()}
+        </div>
+
+
     </section>
   );
 }
