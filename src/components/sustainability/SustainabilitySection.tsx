@@ -33,10 +33,10 @@ export default function SustainabilitySection() {
   return (
     <section className="mx-auto max-w-7xl py-10 md:py-16">
       <header className="mx-auto mb-10 md:mb-12 max-w-3xl text-center">
-        <h2 className="text-[48px] leading-[54px] font-extrabold text-[#463214]">
+        <h2 className="text-[18px] font-[700] md:text-[48px] text-[#463214]">
           Sustainability at Heart
         </h2>
-        <p className="mt-4 text-[28px] leading-[36px] text-[#463214]/90">
+        <p className="mt-4 text-[14px] md:text-[24px] text-[#463214]/90">
           At ANANYA, we're committed to creating a stay that's as kind to nature as it is
           comfortable for you.
         </p>
