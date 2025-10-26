@@ -1,5 +1,8 @@
+import JourneySection  from "@/components/home/Home3section"
+
 export default function Home(){
   return(
-    <div>This is Home Page</div>
+    <> <h1>Home Page</h1>
+    <JourneySection /> </>
   )
 }
