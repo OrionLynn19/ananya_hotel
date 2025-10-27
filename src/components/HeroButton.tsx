@@ -16,6 +16,7 @@ const CtaButton = ({ children, onClick = () => {} }: CtaButtonProps) => {
         flex items-center justify-center
         ${textColor} font-poltawski font-bold text-[12px] md:text-[24px] leading-none
         transition-transform duration-300 hover:scale-[1.01] focus:outline-none active:scale-[0.99]
+        cursor-pointer
       `}
     >
       <div className="w-full h-full rounded-[calc(0.5rem-1px)] md:rounded-[calc(1.25rem-1px)] backdrop-blur-xl flex items-center justify-center relative overflow-hidden">
