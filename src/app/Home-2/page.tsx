@@ -10,7 +10,7 @@ export default function HomeSection2() {
     const [isTransitioning, setIsTransitioning] = useState(false);
 
     const handleTabChange = (tab: string) => {
-        if (activeTab === tab) return; // Don't do anything if clicking the same tab
+        if (activeTab === tab) return; 
 
         setIsTransitioning(true);
         setTimeout(() => {

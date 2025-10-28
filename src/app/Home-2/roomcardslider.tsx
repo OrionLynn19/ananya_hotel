@@ -13,6 +13,7 @@ export default function RoomSlider() {
                 modules={[Navigation]}
                 slidesPerView="auto"
                 spaceBetween={15}
+                allowTouchMove={false}
                 breakpoints={{
                     640: {
                         spaceBetween: 20,
