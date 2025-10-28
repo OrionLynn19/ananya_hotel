@@ -1,5 +1,4 @@
-import CustomerSection from "../components/CustomerSection";
-
+import CustomerSection from "../../components/CustomerSection";
 
 export default function HomePage() {
   return (
