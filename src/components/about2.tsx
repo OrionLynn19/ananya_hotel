@@ -26,17 +26,17 @@ export default function About2() {
 
   return (
     <section
-      className="w-[1218px] mx-auto pt-[176px] pb-[128px]"
+      className="md:w-[1218px] mx-auto pt-[41px] pb-[64px] md:pt-[176px] md:pb-[128px]"
       aria-labelledby="about-heading"
     >
       <h2
         id="about-heading"
-        className="font-poltawski font-extrabold text-[48px] text-[#463214] text-center mb-[64px]"
+        className="hidden sm:block font-poltawski font-bold text-[48px] text-[#463214] text-center mb-[64px]"
       >
         Rooted in Tradition, Inspired by the Future
       </h2>
 
-      <div className="bg-[#FCF9F6] rounded-[64px] p-[53px_36px]">
+      <div className="hidden sm:block bg-[#FCF9F6] rounded-[64px] p-[53px_36px]">
         <div className="max-w-[1142px] mx-auto flex gap-[14px] items-center">
           <div className="w-[414px] shrink-0">
             <h3 className="font-poltawski font-bold text-[40px] text-[#463214] leading-none mb-6">
@@ -131,6 +131,113 @@ export default function About2() {
                     >
                       <path
                         d="M9 18l6-6-6-6"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* Mobile layout (matches Figma mobile specs) */}
+      <div className="sm:hidden w-full mx-auto">
+        <h2 className="w-[296px] h-[42px] mx-auto font-poltawski font-bold text-[18px] text-[#463214] text-center mb-6 leading-none">
+          Rooted in Tradition, Inspired by the Future
+        </h2>
+
+        <div
+          className="relative w-full h-[430px] overflow-hidden"
+          style={{
+            backgroundImage: `url(${slides[active].image})`,
+            backgroundSize: "cover",
+            backgroundPosition: "top",
+          }}
+        >
+          {/* dark gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-b from-[rgba(0,0,0,0.3)] to-[rgba(0,0,0,0.3)] p-2">
+            <div className="w-[300px] mx-auto h-full flex flex-col items-center gap-6">
+              {/* top title */}
+              <div className="w-[300px] h-[46px] flex items-center justify-center">
+                <h3 className="w-[288px] h-[46px] font-poltawski font-bold text-[18px] text-[#FCF9F6] text-center leading-none px-6">
+                  ANANYA stands as more than a hotel
+                </h3>
+              </div>
+
+              {/* content box */}
+              <div className="w-[186px] h-[340.5px]">
+                <div
+                  className="w-[186px] h-[292px] p-2 rounded-[8px]"
+                  style={{ backgroundColor: "rgba(252,249,246,0.5)" }}
+                >
+                  <div className="w-[170px] h-[126px] mx-auto overflow-hidden rounded-[8px]">
+                    <Image
+                      src={slides[active].image}
+                      alt={slides[active].title}
+                      width={170}
+                      height={126}
+                      className="w-full h-full object-cover object-top"
+                    />
+                  </div>
+
+                  <div className="mt-2 w-[170px] h-[142px] text-center">
+                    <h4 className="w-[170px] h-[18px] leading-none font-poltawski font-semibold text-[14px] text-[#463214]">
+                      {slides[active].title}
+                    </h4>
+                    <p className="w-[170px] h-[120px] font-mont text-[12px] text-[#000000] mt-1 tracking-[0.03em] text-left leading-[14px]">
+                      {slides[active].paragraph}
+                    </p>
+                  </div>
+                </div>
+
+                {/* buttons */}
+                <div className="w-full h-[36.4px] flex justify-center gap-[12.48px] pt-3">
+                  <button
+                    onClick={() => setActive(0)}
+                    aria-pressed={active === 0}
+                    className={
+                      "w-[36px] h-[36px] rounded-[26px] border-[1.04px] flex items-center justify-center " +
+                      (active === 0
+                        ? "bg-[#463214] text-white border-[#463214] cursor-default"
+                        : "bg-white text-[#463214] border-[#463214] cursor-pointer")
+                    }
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      className="w-4 h-4"
+                    >
+                      <path
+                        d="M15 18l-6-6 6-6"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </button>
+
+                  <button
+                    onClick={() => setActive(1)}
+                    aria-pressed={active === 1}
+                    className={
+                      "w-[36px] h-[36px] rounded-[26px] border-[1.04px] flex items-center justify-center " +
+                      (active === 1
+                        ? "bg-[#463214] text-white border-[#463214] cursor-default"
+                        : "bg-white text-[#463214] border-[#463214] cursor-pointer")
+                    }
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      className="w-4 h-4"
+                    >
+                      <path
+                        d="M9 18l6-6-6-6"
+                        stroke="currentColor"
+                        strokeWidth="2"
                         strokeLinecap="round"
                         strokeLinejoin="round"
                       />
