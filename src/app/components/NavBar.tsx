@@ -128,6 +128,7 @@ export default function Navbar() {
               }}
               aria-hidden
             >
+            <Link href="/" >
               <Image
                 src="/images/nav-head.png"
                 alt="ANANYA"
@@ -136,6 +137,7 @@ export default function Navbar() {
                 style={{ objectFit: "contain", pointerEvents: "auto" }}
                 priority
               />
+            </Link> 
             </div>
 
             {/* Right actions */}
@@ -285,6 +287,7 @@ export default function Navbar() {
                 height: 70.25,
               }}
             >
+               <Link href="/" onClick={() => setMobileOpen(false)}>
               <Image
                 src="/images/nav-head.png"
                 alt="ANANYA"
@@ -292,7 +295,8 @@ export default function Navbar() {
                 height={60}
                 style={{ objectFit: "contain" }}
                 priority
-              />
+                />
+                </Link>
             </div>
 
             {/* Booking button */}
