@@ -2,6 +2,7 @@
 import EventCategoriesSection from "@/components/home/EventCategoriesSection";
 import React from "react";
 import Hero from "../components/Hero";
+import ExperienceSection from "@/components/home/ExperienceSection";
 
 
 export default function Page() {
@@ -9,6 +10,7 @@ export default function Page() {
     <>
      <Hero />
      <EventCategoriesSection />
+     <ExperienceSection/>
 
     </>
 
