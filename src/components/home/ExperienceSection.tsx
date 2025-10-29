@@ -34,7 +34,7 @@ const cards = [
 export default function ExperienceSection() {
   return (
     <section
-      className="relative mx-auto flex flex-col items-center text-center text-black w-full md:w-[1440px]"
+      className="relative mx-auto flex flex-col items-center text-center text-black w-full md:w-[1440px] lg:w-full"
       style={{
         height: "auto",
         minHeight: "514px",
