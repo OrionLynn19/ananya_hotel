@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
+import Navbar from "./components/NavBar";
+import Footer from "./components/Footer";
+
+
 export const metadata: Metadata = {
   title: "ANANYA HOTEL",
   description: "Hotel Project",
@@ -8,15 +12,17 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
-      <body
-        className={`bg-white antialiased`}
-      >
-        {children}
+
+      <body className="min-h-dvh flex flex-col bg-white text-neutral-900">
+        <Navbar />
+        <main className="flex flex-col">{children}</main>
+        <Footer />
+
       </body>
     </html>
   );
