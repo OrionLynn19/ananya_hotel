@@ -8,7 +8,8 @@ import { usePathname } from "next/navigation";
 export default function Navbar() {
   const [langOpen, setLangOpen] = useState(false);
   const [isBlurred, setIsBlurred] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false); // <-- added
+  const [isFixed, setIsFixed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const langRef = useRef<HTMLDivElement | null>(null);
   const pathname = usePathname();
 
@@ -38,6 +39,31 @@ export default function Navbar() {
     const t = setTimeout(() => setIsBlurred(false), 900);
     return () => clearTimeout(t);
   }, [pathname]);
+
+  // blur on scroll (set when scrolled past threshold) and make header fixed on scroll
+  useEffect(() => {
+    let rafId = 0;
+    const threshold = 24; // px to start blurring; adjust as needed
+
+    function onScroll() {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        const scrolled = window.scrollY;
+        setIsBlurred(scrolled > threshold);
+        setIsFixed(scrolled > 0); // header becomes fixed when user scrolls
+      });
+    }
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    // initialize state based on current scroll position
+    setIsBlurred(window.scrollY > threshold);
+    setIsFixed(window.scrollY > 0);
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
+  }, []);
 
   // font settings to apply to all text elements in the nav
   const navTextStyle: React.CSSProperties = {
@@ -83,12 +109,19 @@ export default function Navbar() {
     justifyContent: "space-between",
   };
 
-  // ...existing code continues...
-
   return (
     <>
       {/* existing desktop header */}
-      <header className="hidden md:block">
+      <header
+        className="hidden md:block"
+        style={{
+          position: isFixed ? "fixed" : "relative",
+          top: isFixed ? 0 : undefined,
+          left: isFixed ? 0 : undefined,
+          right: isFixed ? 0 : undefined,
+          zIndex: isFixed ? 50 : undefined,
+        }}
+      >
         <div
           style={{
             position: "relative",
@@ -128,16 +161,16 @@ export default function Navbar() {
               }}
               aria-hidden
             >
-            <Link href="/" >
-              <Image
-                src="/images/nav-head.png"
-                alt="ANANYA"
-                width={120}
-                height={112}
-                style={{ objectFit: "contain", pointerEvents: "auto" }}
-                priority
-              />
-            </Link> 
+              <Link href="/">
+                <Image
+                  src="/images/nav-head.png"
+                  alt="ANANYA"
+                  width={120}
+                  height={112}
+                  style={{ objectFit: "contain", pointerEvents: "auto" }}
+                  priority
+                />
+              </Link>
             </div>
 
             {/* Right actions */}
@@ -225,8 +258,22 @@ export default function Navbar() {
         </div>
       </header>
 
+      {/* spacer to prevent content jump when header is fixed */}
+      {isFixed && (
+        <div className="hidden md:block" style={{ height: 152.76 }} />
+      )}
+
       {/* mobile header (per spec) */}
-      <header className="md:hidden flex justify-around ">
+      <header
+        className="md:hidden flex justify-around "
+        style={{
+          position: isFixed ? "fixed" : "relative",
+          top: isFixed ? 0 : undefined,
+          left: isFixed ? 0 : undefined,
+          right: isFixed ? 0 : undefined,
+          zIndex: isFixed ? 50 : undefined,
+        }}
+      >
         <div style={{ position: "relative", left: "-3px" }}>
           <div className="gap-9" style={dynamicMobileStyle}>
             {/* TOGGLE: hamburger <-> back arrow */}
@@ -269,9 +316,30 @@ export default function Navbar() {
                     justifyContent: "space-between",
                   }}
                 >
-                  <span style={{ display: "block", height: 2, background: "#4a3a2b", borderRadius: 2 }} />
-                  <span style={{ display: "block", height: 2, background: "#4a3a2b", borderRadius: 2 }} />
-                  <span style={{ display: "block", height: 2, background: "#4a3a2b", borderRadius: 2 }} />
+                  <span
+                    style={{
+                      display: "block",
+                      height: 2,
+                      background: "#4a3a2b",
+                      borderRadius: 2,
+                    }}
+                  />
+                  <span
+                    style={{
+                      display: "block",
+                      height: 2,
+                      background: "#4a3a2b",
+                      borderRadius: 2,
+                    }}
+                  />
+                  <span
+                    style={{
+                      display: "block",
+                      height: 2,
+                      background: "#4a3a2b",
+                      borderRadius: 2,
+                    }}
+                  />
                 </div>
               </button>
             )}
@@ -287,16 +355,16 @@ export default function Navbar() {
                 height: 70.25,
               }}
             >
-               <Link href="/" onClick={() => setMobileOpen(false)}>
-              <Image
-                src="/images/nav-head.png"
-                alt="ANANYA"
-                width={100}
-                height={60}
-                style={{ objectFit: "contain" }}
-                priority
+              <Link href="/" onClick={() => setMobileOpen(false)}>
+                <Image
+                  src="/images/nav-head.png"
+                  alt="ANANYA"
+                  width={100}
+                  height={60}
+                  style={{ objectFit: "contain" }}
+                  priority
                 />
-                </Link>
+              </Link>
             </div>
 
             {/* Booking button */}
@@ -322,6 +390,9 @@ export default function Navbar() {
           </div>
         </div>
       </header>
+
+      {/* spacer for mobile when fixed */}
+      {isFixed && <div className="md:hidden" style={{ height: 122.25 }} />}
 
       {/* mobile menu panel (opens when hamburger tapped) */}
       {mobileOpen && (
