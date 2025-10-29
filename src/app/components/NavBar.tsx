@@ -79,7 +79,7 @@ export default function Navbar() {
   };
 
   const dynamicNavStyle: React.CSSProperties = {
-    width: 1443,
+    width: "100%", // made responsive — control actual container width with Tailwind classes
     height: 152.76,
     padding: "20px 40px",
     gap: 10,
@@ -92,7 +92,7 @@ export default function Navbar() {
       "background-color 300ms ease, backdrop-filter 300ms ease, border 300ms ease",
   };
 
-  // mobile nav style (per spec)
+  // mobile nav style (unchanged)
   const dynamicMobileStyle: React.CSSProperties = {
     width: 365,
     height: 122.25,
@@ -111,7 +111,7 @@ export default function Navbar() {
 
   return (
     <>
-      {/* existing desktop header */}
+      {/* desktop header */}
       <header
         className="hidden md:block"
         style={{
@@ -129,7 +129,7 @@ export default function Navbar() {
           }}
         >
           <div
-            className="mx-auto flex items-center justify-between gap-2"
+            className="mx-auto w-[1440px] max-w-full 2xl:w-full flex items-center justify-between gap-2"
             style={dynamicNavStyle}
           >
             {/* Left nav */}
@@ -145,12 +145,13 @@ export default function Navbar() {
               </Link>
             </nav>
 
-            {/* Center logo - absolute positioned to match exact offsets */}
+            {/* Center logo - absolute positioned */}
             <div
               style={{
                 position: "absolute",
                 top: 20,
-                left: 663.38,
+                left: "50%",
+                transform: "translateX(-50%)",
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
@@ -263,7 +264,7 @@ export default function Navbar() {
         <div className="hidden md:block" style={{ height: 152.76 }} />
       )}
 
-      {/* mobile header (per spec) */}
+      {/* mobile header (unchanged) */}
       <header
         className="md:hidden flex justify-around "
         style={{
@@ -568,7 +569,6 @@ export default function Navbar() {
                 About Us
               </Link>
 
-              {/* Items without project routes rendered as plain text to match image */}
               <div
                 style={{
                   ...navTextStyle,
@@ -600,7 +600,6 @@ export default function Navbar() {
                 Gallary
               </div>
 
-              {/* Discover section with bullets */}
               <div>
                 <div
                   style={{
@@ -643,7 +642,6 @@ export default function Navbar() {
                 </ul>
               </div>
 
-              {/* Our Services section with bullets */}
               <div>
                 <div
                   style={{

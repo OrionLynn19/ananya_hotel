@@ -3,8 +3,6 @@ import Image from "next/image";
 import MobileLocationSelector from "./FLocationSelector";
 import MobileFooterLower from "./MobileFooterLower";
 
-
-
 export default function Footer() {
   const navTextStyle: React.CSSProperties = {
     fontFamily: '"Poltawski Nowy", "Poltawski-Nowy", serif',
@@ -21,18 +19,15 @@ export default function Footer() {
 
   return (
     <footer>
-      {/* === DESKTOP: absolute container  */}
+      {/* === DESKTOP: responsive container */}
       <div
-        className="w-full bg-[#FCF9F6] flex flex-col  hidden md:block"
+        className="w-full bg-[#FCF9F6] flex flex-col hidden md:block"
         style={{ fontFamily: '"Poltawski Nowy", "Poltawski-Nowy", serif' }}
       >
+        {/* responsive center: max width 1440, fluid below, full width at 2xl */}
         <div
-          className="w-1440px bg-[#FCF9F6]"
+          className="mx-auto w-[1440px] max-w-full 2xl:w-full bg-[#FCF9F6]"
           style={{
-            position: "absolute",
-
-            left: "50%",
-            transform: "translateX(-50%)",
             height: "1251px",
             paddingTop: 127,
             paddingRight: 111,
@@ -41,7 +36,7 @@ export default function Footer() {
             gap: 10,
           }}
         >
-          {/* ...existing desktop content unchanged... */}
+          {/* desktop content (unchanged) */}
           <div className="w-full flex items-center justify-between">
             <div className="flex " style={{ paddingTop: 16, gap: 9 }}>
               <Link href="/" aria-label="Ananya home">
@@ -113,7 +108,7 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* ...rest of desktop content left unchanged (columns, nav, awards, social, copyright) ... */}
+          {/* ...rest of desktop content unchanged (columns, nav, awards, social, copyright) ... */}
           <div className="mt-18 flex flex-row justify-between gap-3">
             {/* Column 1 */}
             <div>
@@ -284,10 +279,9 @@ export default function Footer() {
           </div>
 
           <div aria-hidden style={{ marginTop: 14 }} />
-          <div
-            aria-hidden
+          <div className="w-[1218px] 2xl:w-full"
+           aria-hidden
             style={{
-              width: 1218,
               height: 0,
               borderTop: "0.5px solid var(--text-color, #463214)",
               transform: "rotate(-0deg)",
@@ -444,10 +438,9 @@ export default function Footer() {
             </div>
           </div>
 
-          <div
+          <div className="w-[1218px] 2xl:w-full"
             aria-hidden
             style={{
-              width: 1218,
               height: 0,
               borderTop: "0.5px solid var(--text-color, #463214)",
               transform: "rotate(-0deg)",
@@ -514,15 +507,13 @@ export default function Footer() {
               ))}
             </div>
           </div>
-        </div>{" "}
+        </div>
       </div>
-      {/* <-- end absolute desktop container */}
+      {/* <-- end desktop container */}
 
       {/* MOBILE */}
       <MobileLocationSelector />
       <MobileFooterLower />
-
-      {/* end mobile block */}
     </footer>
   );
 }
