@@ -279,8 +279,9 @@ export default function Footer() {
           </div>
 
           <div aria-hidden style={{ marginTop: 14 }} />
-          <div className="w-[1218px] 2xl:w-full"
-           aria-hidden
+          <div
+            className="w-[1218px] 2xl:w-full"
+            aria-hidden
             style={{
               height: 0,
               borderTop: "0.5px solid var(--text-color, #463214)",
@@ -328,7 +329,7 @@ export default function Footer() {
                   }}
                 >
                   <li style={{ marginBottom: 16 }}>
-                    <Link href="/about">About Us</Link>
+                    <Link href="/aboutus">About Us</Link>
                   </li>
                   <li style={{ marginBottom: 16 }}>Rooms</li>
                   <li style={{ marginBottom: 16 }}>Promotions</li>
@@ -438,7 +439,8 @@ export default function Footer() {
             </div>
           </div>
 
-          <div className="w-[1218px] 2xl:w-full"
+          <div
+            className="w-[1218px] 2xl:w-full"
             aria-hidden
             style={{
               height: 0,

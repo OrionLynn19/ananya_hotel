@@ -10,7 +10,7 @@ export default function MobileFooterLower() {
             <div className="font-semibold text-[16px] mb-3">Navigation</div>
             <ul className="text-[14px] space-y-2">
               <li>
-                <Link href="/about">About Us</Link>
+                <Link href="/aboutus">About Us</Link>
               </li>
               <li>Rooms</li>
               <li>Promotions</li>
@@ -93,7 +93,7 @@ export default function MobileFooterLower() {
             ))}
           </div>
         </div>
-        
+
         <div className="text-center text-[12px] align-center">
           Copyright 2020. ANANYA Hotels & Resorts. All Rights Reserved
         </div>

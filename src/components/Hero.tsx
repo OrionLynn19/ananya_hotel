@@ -79,7 +79,7 @@ export default function Hero() {
         </div>
 
         <div
-          className="hidden md:block absolute pl-[53.43px]"
+          className="hidden md:block absolute"
           style={{
             width: "155.14px",
             height: "0px",
