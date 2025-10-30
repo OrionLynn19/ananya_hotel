@@ -2,26 +2,27 @@
 
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, FreeMode } from "swiper/modules";
+import { FreeMode } from "swiper/modules";
 import type { Swiper as SwiperCore } from "swiper";
 import "swiper/css";
 
-const slides = [
+const baseSlides = [
   { src: "/images/Rectangle 159.png", alt: "Resort pool at sunset" },
   { src: "/images/Rectangle 160.png", alt: "Beachfront cabana dining" },
   { src: "/images/Rectangle 161.png", alt: "Sunset over the coastline" },
   { src: "/images/Rectangle 162.png", alt: "Seaside lobby lounge" },
   { src: "/images/Rectangle 163.png", alt: "Ocean boardwalk view" },
-  { src: "/images/Rectangle 159.png", alt: "Tropical resort courtyard" },
-  { src: "/images/Rectangle 159.png", alt: "Ocean view at dusk" },
+  { src: "/images/Rectangle 164.png", alt: "Tropical bar by the shore" },
+  { src: "/images/Rectangle 165.png", alt: "Palm tree sunset" },
 ];
 
-// 🎛️ Continuous panoramic settings
+// ✅ Duplicate twice for perfect seamless looping
+const slides = [...baseSlides, ...baseSlides, ...baseSlides];
+
 const PANORAMA = {
-  curveRadius: 1200, // adjust curvature depth
+  curveRadius: 1300,
   maxTiltDeg: 10,
   baseZ: 80,
-  transitionMs: 0, // no snapping, fully fluid
 };
 
 export default function Home3() {
@@ -44,9 +45,9 @@ export default function Home3() {
         </a>
       </div>
 
-      {/* Infinite Panorama Carousel */}
+      {/* Continuous Panorama Carousel */}
       <div
-        className="mx-auto mt-12 md:mt-16 max-w-6xl"
+        className="mx-auto mt-12 md:mt-16 max-w-6xl relative overflow-hidden"
         style={{
           perspective: "1600px",
           WebkitMaskImage:
@@ -56,38 +57,25 @@ export default function Home3() {
         }}
       >
         <Swiper
-          modules={[Autoplay, FreeMode]}
-          grabCursor
+          modules={[FreeMode]}
+          slidesPerView={3.4}
+          spaceBetween={9}
           centeredSlides
-          loop
-          watchSlidesProgress
-          slidesPerView={3}
-          spaceBetween={48}
-          breakpoints={{
-            480: { slidesPerView: 2, spaceBetween: 20 },
-            768: { slidesPerView: 2.4, spaceBetween: 26 },
-            1024: { slidesPerView: 3, spaceBetween: 30 },
-          }}
-          autoplay={{
-            delay: 0, // continuous
-            disableOnInteraction: false,
-            pauseOnMouseEnter: false,
-          }}
-          speed={9000} // smooth drift speed (higher = slower)
+          allowTouchMove={false}
           freeMode={{ enabled: true, momentum: false }}
-          allowTouchMove={false} // disable manual drag to keep it continuous
+          loop={false}
+          speed={0}
           onBeforeInit={(swiper: SwiperCore) => {
             swiper.el.classList.add("swiper-panorama", "swiper-3d");
+            swiper.wrapperEl.style.transformStyle = "preserve-3d";
           }}
           onProgress={(swiper: SwiperCore) => {
             const { curveRadius, maxTiltDeg, baseZ } = PANORAMA;
-
             swiper.slides.forEach((slideEl: HTMLElement) => {
               const raw = (slideEl as unknown as { progress?: number }).progress;
               const p = typeof raw === "number" ? raw : 0;
 
-              // curvature math (smooth warp)
-              const angle = p * (Math.PI / 9); // smaller divisor = more curve
+              const angle = p * (Math.PI / 9);
               const x = Math.sin(angle) * curveRadius * 0.1;
               const z = baseZ - Math.cos(angle) * 100;
               const rotateY = p * maxTiltDeg;
@@ -123,6 +111,23 @@ export default function Home3() {
             </SwiperSlide>
           ))}
         </Swiper>
+
+        {/* ✅ Continuous non-stop motion (faster + smoother) */}
+        <style jsx global>{`
+          .swiper-wrapper {
+            display: flex;
+            will-change: transform;
+            animation: scroll-panorama 18s linear infinite;
+          }
+          @keyframes scroll-panorama {
+            from {
+              transform: translate3d(0, 0, 0);
+            }
+            to {
+              transform: translate3d(-33.33%, 0, 0);
+            }
+          }
+        `}</style>
       </div>
     </section>
   );
