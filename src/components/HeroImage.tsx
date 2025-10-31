@@ -3,14 +3,15 @@ import Image from "next/image";
 
 export default function HeroImage() {
   return (
-    <section className="relative w-full h-[90vh] overflow-hidden">
+    <div className="relative w-full overflow-hidden">
       <Image
-        src="/Images/wallpaper.png"   
-        alt="Hero"
-        fill
-        className="object-cover object-center"
+        src="/Images/wallpaper.png"     // make sure folder name matches exactly
+        alt="About Ananya"
+        width={1920}
+        height={1080}
+        className="block w-full h-auto object-contain"
         priority
       />
-    </section>
+    </div>
   );
 }
