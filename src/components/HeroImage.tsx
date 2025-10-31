@@ -1,11 +1,10 @@
-// src/components/HeroImage.tsx
 import Image from "next/image";
 
 export default function HeroImage() {
   return (
     <div className="relative w-full overflow-hidden">
       <Image
-        src="/Images/wallpaper.png"     // make sure folder name matches exactly
+        src="/Images/wallpaper.png"     
         alt="About Ananya"
         width={1920}
         height={1080}
