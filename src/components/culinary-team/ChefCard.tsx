@@ -1,86 +1,79 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback } from "react";
+import { motion } from "framer-motion";
 
 export type Chef = {
-  id: string;
-  name: string;
-  description: string;
-  image: string;
+    id: string;
+    name: string;
+    description: string;
+    image: string;
 };
 
 type ChefCardProps = {
-  chef: Chef;
-  isActive: boolean;
-  onActivate: () => void;
-  onDeactivate: () => void;
+    chef: Chef;
+    isActive: boolean;
+    onActivate: () => void;
+    onDeactivate: () => void;
 };
 
 export default function ChefCard({
-  chef,
-  isActive,
-  onActivate,
-  onDeactivate,
+    chef,
+    isActive,
+    onActivate,
+    onDeactivate,
 }: ChefCardProps) {
-  const handleClick = useCallback(() => {
-    onActivate();
-  }, [onActivate]);
-
-  return (
-    <article
-      onMouseEnter={onActivate}
-      onMouseLeave={onDeactivate}
-      onClick={handleClick}
-      className={`
-        relative overflow-hidden rounded-[16px] bg-black/30 cursor-pointer
-        transition-all duration-300 ease-out
-        /* mobile: fixed size from Figma */
-        w-[236px] h-[594px] flex-shrink-0
-        /* center image nicely on mobile */
-        md:w-auto md:h-auto md:flex-1 md:rounded-2xl md:flex-shrink
-        ${isActive ? "md:flex-[1.8]" : "md:flex-[0.45]"}
-      `}
-    >
-      {/* image */}
-      <Image
-        src={chef.image}
-        alt={chef.name}
-        fill
-        className={`
-          object-cover transition-all duration-300
-          ${isActive ? "md:scale-[1.02]" : "md:scale-100"}
-        `}
-        priority={isActive}
-      />
-
-      {/* overlay */}
-      <div
-        className={`
-          absolute inset-x-0 bottom-0
-          bg-gradient-to-t from-black/70 via-black/40 to-transparent
-          text-white flex flex-col transition-all duration-300
-          h-[120px] px-4 py-4 justify-end
-          ${isActive ? "md:h-[48%] md:px-6 md:py-6 md:gap-3 md:justify-end" : ""}
-        `}
-      >
-        <h3
-          className={`
-            font-semibold tracking-tight drop-shadow-md
-            text-center text-2xl
-            ${isActive ? "md:text-left md:text-2xl" : ""}
-          `}
+    return (
+        <motion.div
+            layout
+            onMouseEnter={onActivate}
+            onMouseLeave={onDeactivate}
+            onClick={onActivate}
+            transition={{ type: "spring", stiffness: 250, damping: 25 }}
+            className={`
+                relative rounded-[16px] overflow-hidden flex-shrink-0 cursor-pointer
+                ${isActive ? "w-[700px] h-[594px] z-10" : "w-[236px] h-[594px]"}
+            `}
         >
-          {chef.name}
-        </h3>
+            {/* image */}
+            <motion.div
+                className="absolute inset-0"
+                animate={{ scale: isActive ? 1.08 : 1 }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
+            >
+                <Image
+                    src={chef.image ?? "/placeholder.png"}
+                    alt={chef.name}
+                    width={360}
+                    height={594}
+                    className="w-full h-full object-cover"
+                />
+            </motion.div>
 
-        {/* show description only on md+ when active */}
-        {isActive && (
-          <p className="hidden md:block text-sm md:text-base leading-relaxed text-white/90">
-            {chef.description}
-          </p>
-        )}
-      </div>
-    </article>
-  );
+            {/* overlay */}
+            <motion.div
+                className={`
+                    absolute inset-x-0 bottom-0 bg-black/80 text-white
+                    flex flex-col items-center justify-center text-center
+                    px-6
+                `}
+                animate={{ height: isActive ? 150 : 120 }}
+                transition={{ type: "spring", stiffness: 200, damping: 25 }}
+            >
+                <p className="font-semibold text-2xl leading-tight">{chef.name}</p>
+
+                {isActive && (
+                    <motion.p
+                        className="mt-3 text-sm md:text-base text-left text-white/90 leading-snug w-full"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 10 }}
+                        transition={{ duration: 0.25 }}
+                    >
+                        {chef.description}
+                    </motion.p>
+                )}
+            </motion.div>
+        </motion.div>
+    );
 }
