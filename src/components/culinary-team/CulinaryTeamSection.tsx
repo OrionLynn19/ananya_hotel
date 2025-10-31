@@ -2,6 +2,19 @@
 
 import { useState } from "react";
 import ChefCard, { Chef } from "./ChefCard";
+import { Montserrat, Poltawski_Nowy } from "next/font/google";
+
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  weight: ["400", "600", "700"],
+  display: "swap",
+});
+
+const poltawskiNowy = Poltawski_Nowy({
+  subsets: ["latin"],
+  weight: ["400", "600", "700"],
+  display: "swap",
+});
 
 const chefs: Chef[] = [
   {
@@ -15,14 +28,14 @@ const chefs: Chef[] = [
     id: "xua",
     name: "Chef Xua",
     description:
-      "Chef Xua blends classic techniques with modern presentation to create memorable desserts and signature menus.",
+      "Chef Xua crafts unforgettable culinary experiences. With a focus on local ingredients and innovative techniques, he brings a unique flavor to every event.",
     image: "/images/chef-xua.jpg",
   },
   {
     id: "nat",
     name: "Chef Nat",
     description:
-      "Chef Nat ensures every plate leaves the kitchen with precision, balance, and authentic taste.",
+      "Chef Nat crafts unforgettable culinary experiences. With a focus on local ingredients and innovative techniques, he brings a unique flavor to every event.",
     image: "/images/chef-nat.jpg",
   },
 ];
@@ -31,13 +44,13 @@ export default function CulinaryTeamSection() {
   const [activeId, setActiveId] = useState<string | null>(null);
 
   return (
-    <section className="w-full bg-[#fdfaf4] py-12 md:py-16">
+    <section className="w-full py-12 md:py-16">
       <div className="mx-auto w-full flex flex-col items-center gap-10">
-        <div className="text-center max-w-3xl">
-          <h2 className="text-[28px] md:text-[36px] leading-tight font-semibold text-[#463214]">
+        <div className={`text-center ${poltawskiNowy.className} max-w-6xl`}>
+          <h2 className="text-[28px] md:text-[40px] font-bold text-[#463214]">
             Our Culinary Team
           </h2>
-            <p className="mt-4 text-base md:text-lg text-[#463214]/80">
+            <p className="mt-4 font-semibold md:text-[32px] text-[#463214]">
               Get to know the talented chefs dedicated to making your dining experience unforgettable.
             </p>
         </div>
