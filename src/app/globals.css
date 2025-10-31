@@ -28,3 +28,10 @@ body {
 .font-poltawski {
   font-family: var(--font-poltawski) !important;
 }
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+

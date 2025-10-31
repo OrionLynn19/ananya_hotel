@@ -1,3 +1,4 @@
+
 "use client";
 import EventCategoriesSection from "@/components/home/EventCategoriesSection";
 import React from "react";
@@ -6,6 +7,7 @@ import ExperienceSection from "@/components/home/ExperienceSection";
 import HomeSection2 from "./Home-2/page";
 import Home3 from "./components/home3/Home3";
 import About_us3 from "./components/about_us/about_us3";
+import CustomerSection from "../../components/CustomerSection";
 
 export default function Page() {
   return (
@@ -18,6 +20,6 @@ export default function Page() {
       <Home3 />
       <EventCategoriesSection />
       <ExperienceSection />
+      <CustomerSection />
     </>
-  );
-}
+  ); }
