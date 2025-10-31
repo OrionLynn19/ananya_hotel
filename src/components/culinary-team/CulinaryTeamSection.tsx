@@ -32,26 +32,17 @@ export default function CulinaryTeamSection() {
 
   return (
     <section className="w-full bg-[#fdfaf4] py-12 md:py-16">
-      <div className="mx-auto flex max-w-6xl flex-col items-center gap-10 px-4">
-        {/* heading */}
-        <div className="text-center max-w-2xl">
-          <h2 className="text-[28px] leading-tight font-semibold text-[#463214] md:text-[36px]">
+      <div className="mx-auto w-full flex flex-col items-center gap-10">
+        <div className="text-center max-w-3xl">
+          <h2 className="text-[28px] md:text-[36px] leading-tight font-semibold text-[#463214]">
             Our Culinary Team
           </h2>
-          <p className="mt-4 text-base md:text-lg text-[#463214]/80">
-            Get to know the talented chefs dedicated to making your dining experience unforgettable.
-          </p>
+            <p className="mt-4 text-base md:text-lg text-[#463214]/80">
+              Get to know the talented chefs dedicated to making your dining experience unforgettable.
+            </p>
         </div>
 
-        {/* cards */}
-        <div
-          className="
-            flex flex-col items-center gap-[10px]
-            md:flex-row md:items-stretch md:gap-4
-            md:h-[420px]
-            w-full
-          "
-        >
+        <div className="flex flex-col items-center gap-5 md:flex-row md:justify-center w-full">
           {chefs.map((chef) => (
             <ChefCard
               key={chef.id}
