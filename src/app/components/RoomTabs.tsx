@@ -16,10 +16,11 @@ export default function RoomTabs({ tabs, active, onChange }: Props) {
             key={tab}
             onClick={() => onChange(tab)}
             className={[
-              "rounded-full border px-4 py-2 text-[12px] md:text-[13px]",
+              "rounded-full px-5 py-2.5 text-[13px] md:text-[14px] font-semibold transition-all duration-300",
+              "shadow-[0_2px_6px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_14px_rgba(0,0,0,0.12)] hover:-translate-y-0.5 hover:scale-[1.03]",
               isActive
-                ? "border-[#3b2a16] bg-[#efe6db] text-[#3b2a16]"
-                : "border-[#e7dccd] bg-white text-[#4a3a24] hover:bg-[#faf4ec]"
+                ? "bg-[#4a331a] text-white"
+                : "bg-white text-[#4a3a24] border border-[#e8e0d2] hover:bg-[#f5ede2]"
             ].join(" ")}
           >
             {tab}
