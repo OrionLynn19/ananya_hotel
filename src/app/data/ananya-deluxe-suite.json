@@ -1,0 +1,34 @@
+{
+  "id": "1",
+  "slug": "ananya-deluxe-suite",
+"title": "ANANYA Deluxe Suite",
+"description": "The spacious living area features a cozy double bed, a comfortable couch, satellite TV, telephone, safe, minibar, desk, kettle set, hot water bottle, and a digital guest folder with all the important information for your stay.\nThe bathroom is equipped with a shower, toilet, bidet, washbasin, hairdryer, cosmetic mirror, soap/shampoo, cosmetic tissues, bathrobe, and slippers – for a thoroughly relaxing and well-cared-for experience.\nA parking space directly in front of the hotel is included in the price.",
+"features": [
+    { "key": "smoking", "label": "No-Smoking", "icon": "/images/no-smoking.png" },
+    { "key": "capacity", "label": "2-4 People", "icon": "/images/user.png" },
+    { "key": "pets", "label": "No-Pet Allowed", "icon": "/images/no-animals.png" },
+    { "key": "size", "label": "55m - 44m", "icon": "/images/construction.png" }
+
+  ],
+  "facilities": [
+    { "id": "pool_party", "name": "Pool Party", "icon": "/images/fac1.png" },
+    { "id": "pool", "name": "Pool", "icon": "/images/fac2.png" },
+    { "id": "fire show", "name": "Fire Show", "icon": "/images/fac3.png" },
+    { "id": "rain_shower", "name": "Rain Shower", "icon": "/images/fac4.png" }
+  ],
+  "images": [
+    { "url": "/images/room1.1.png", "alt": "ANANYA Deluxe Suite main" },
+    { "url": "/images/room1.2.png", "alt": "Living area" },
+    { "url": "/images/room1.3.png", "alt": "Bathroom" },
+    { "url": "/images/room1.4.png", "alt": "Bedroom" },
+    { "url": "/images/room1.5.png", "alt": "Balcony view" } 
+  ],
+  "contacts": [
+    {
+      "branch": "ANANYA Hua Hin",
+      "address": "...",
+      "phone": "...",
+      "email": "huahin@ananya.co.ac"
+    }
+  ]
+}
