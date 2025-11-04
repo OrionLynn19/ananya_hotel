@@ -1,8 +1,11 @@
 "use client";
 import Image from "next/image";
+import RoomsScreen from "../components/RoomsScreen";
 
 export default function Room1() {
     return (
+        <>
+        
         <div className="image-container relative w-full h-auto">
             <Image
                 src="/images/room.png"
@@ -19,7 +22,11 @@ export default function Room1() {
                     with breathtaking ocean views
                 </p>
             </div>
+           
 
         </div>
+        <RoomsScreen />;
+        
+        </>
     );
 }
