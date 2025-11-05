@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import DestinationPicker from "./DestinationPicker";
 import RoomTabs from "./RoomTabs";
-import { RoomCard } from "./RoomCard";
+import RoomCard from "./RoomCard";
 import { ROOMS, ROOM_TABS, DESTINATIONS, type Room } from "../data/room.data";
 
 export default function RoomsScreen() {
