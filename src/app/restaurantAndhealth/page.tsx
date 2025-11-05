@@ -81,9 +81,10 @@ export default function AboutPage() {
         </div>
 
       </div>
+      < DiningShowcase/>
       <CulinarySlider />
       <CulinaryTeamSection />
-      < DiningShowcase/>
+      
     </>
   );
 }
