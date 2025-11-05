@@ -1,6 +1,7 @@
 "use client";
 import CulinarySlider from "../../components/CulinarySlider";
 import CulinaryTeamSection from "@/components/culinary-team/CulinaryTeamSection";
+import DiningShowcase from "@/components/dinning/DinningExandable";
 import Image from "next/image";
 
 export default function AboutPage() {
@@ -82,6 +83,7 @@ export default function AboutPage() {
       </div>
       <CulinarySlider />
       <CulinaryTeamSection />
+      < DiningShowcase/>
     </>
   );
 }
