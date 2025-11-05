@@ -14,7 +14,9 @@ export default function MobileFooterLower() {
               </li>
               <li>Rooms</li>
               <li>Promotions</li>
-              <li>Discover</li>
+              <li>
+                <Link href="/discover">Discover</Link>
+              </li>
               <li>Our Services</li>
               <li>Gallery</li>
               <li>My Booking</li>
