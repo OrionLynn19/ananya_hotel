@@ -71,7 +71,7 @@ export default function HomeSection2() {
             default:
                 return "/Images/home2-bg1.png";
         }
-    }
+    };
 
     return (
         <div className="bg-white p-3 md:p-5">
@@ -131,13 +131,8 @@ export default function HomeSection2() {
                             </div>
                         </div>
                     </div>
-
-
                 </div>
-
             </div>
-
         </div>
-
-    )
-} 
+    );
+}
