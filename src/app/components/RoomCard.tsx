@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { useReveal } from "./useReveal";
 import { Room } from "../data/room.data";
 
 /* ---------- small helpers ---------- */
@@ -83,24 +82,20 @@ const BLUR =
   "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYwMCIgaGVpZ2h0PSIxMjAwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIxNjAwIiBoZWlnaHQ9IjEyMDAiIGZpbGw9IiNlZWUzZDUiLz48L3N2Zz4=";
 
 /* ---------- CARD ---------- */
-export function RoomCard({ room }: { room: Room }) {
-  const revealRef = useReveal<HTMLDivElement>();
+export default function RoomCard({ room }: { room: Room }) {
   const [imgLoaded, setImgLoaded] = useState(false);
 
   return (
-    <article
-      ref={revealRef}
-      className="reveal opacity-0 translate-y-3 rounded-[20px] md:rounded-[28px] bg-white border border-[#efe7db] shadow-sm overflow-hidden"
-    >
+    <article className="rounded-[20px] md:rounded-[28px] bg-white border border-[#efe7db] shadow-sm overflow-hidden">
       <div className="md:flex md:items-stretch">
-        {/* IMAGE: stacked on mobile, column on md+ */}
+        {/* IMAGE */}
         <div className="relative md:flex-none md:w-[560px]">
           <Tag text={room.wingLabel} />
+
           {!imgLoaded && (
             <div className="absolute inset-0 rounded-t-[20px] md:rounded-none md:rounded-l-[28px] bg-[#f6efe2] shimmer" />
           )}
 
-          {/* Mobile: 3/2 gives a bit more height than 16:9; feels less “letterboxed” */}
           <div className="relative w-full aspect-[3/2] md:aspect-auto md:h-full">
             <Image
               src={room.image}
@@ -113,11 +108,12 @@ export function RoomCard({ room }: { room: Room }) {
               placeholder="blur"
               blurDataURL={BLUR}
               loading="lazy"
-              onLoadingComplete={() => setImgLoaded(true)}
+              onLoad={() => setImgLoaded(true)}
             />
           </div>
         </div>
 
+        {/* CONTENT */}
         <div className="p-4 md:p-8 pb-6 md:pb-8 md:flex-1 md:border-l md:border-[#efe7db]/80">
           <h3 className="font-serif text-[18px] sm:text-[20px] md:text-[28px] font-semibold text-[#3b2a16]">
             {room.title}
@@ -132,6 +128,7 @@ export function RoomCard({ room }: { room: Room }) {
             )}
           </ul>
 
+          {/* AMENITIES */}
           <div className="mt-4 -mx-4 md:mx-0">
             <div className="px-4 md:px-0 flex gap-2.5 md:gap-3 overflow-x-auto no-scrollbar md:flex-wrap md:overflow-visible">
               {room.amenities.includes("Parking") && <Amenity label="Parking" icon={Icon.Parking} />}
@@ -143,6 +140,7 @@ export function RoomCard({ room }: { room: Room }) {
 
           <div className="mt-5 md:mt-6 h-px w-full max-w-[340px] bg-[#d8c8ae]" />
 
+          {/* PRICE + BUTTONS */}
           <div className="mt-4 flex items-center justify-between gap-3 flex-wrap">
             <p className="font-serif text-[20px] md:text-[30px] font-extrabold text-[#3b2a16]">
               ${room.price}
@@ -151,7 +149,6 @@ export function RoomCard({ room }: { room: Room }) {
               </span>
             </p>
 
-            {/* keep buttons tight; no full-width on mobile */}
             <div className="flex items-center gap-2 shrink-0">
               <button
                 className="rounded-full border border-[#d6c7ad] bg-white text-[#3b2a16] px-4 py-2 text-[13px] font-medium shadow-sm hover:bg-[#fff8ee] transition"
@@ -172,5 +169,3 @@ export function RoomCard({ room }: { room: Room }) {
     </article>
   );
 }
-
-export default RoomCard;
