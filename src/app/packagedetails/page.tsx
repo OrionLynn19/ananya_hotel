@@ -1,5 +1,10 @@
-"use client" ; 
+"use client" ;
+import PackageHero from "@/components/PackageHero";
+
+ 
 
 export default function PackageDetails () {
-    return <div> This is Package Details Page </div>   
+    return <>
+        <PackageHero />
+    </>  
 }
