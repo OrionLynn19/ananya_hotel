@@ -1,11 +1,13 @@
-"use client";
 
+"use client" ;
 import OurService3A from "@/components/ourService3/ourService3A";
+import LookingForSection from "@/components/ourService3/LookingFor";
 
-export default function OurServicePage() {
-  return (
-    <>
-      <OurService3A />
+ 
+export default function ourService() {
+    return <>
+        <LookingForSection />
+          <OurService3A />
     </>
-  );
-}
+}; 
+
