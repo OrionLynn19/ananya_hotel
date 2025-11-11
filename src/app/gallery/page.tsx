@@ -1,6 +1,7 @@
+"use client";
 
-"use client"; 
+import GalleryPage from "../../components/gallery/GalleryPage";
 
-export default function  Gallery ()  {
-    return  <div> Gallery Page </div> 
-};
+export default function Gallery() {
+  return <GalleryPage />;
+}
