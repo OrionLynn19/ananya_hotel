@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
-
+import "swiper/css";
+import "swiper/css/effect-coverflow"; // Crucial for the 3D depth effect
+import "swiper/css/pagination";
 import Navbar from "./components/NavBar";
 import Footer from "./components/Footer";
 
