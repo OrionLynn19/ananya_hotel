@@ -1,5 +1,8 @@
-"use client" ; 
+"use client" ;
+import PromotionSection2 from "@/components/promotionpackages2/promotionpackages2";
+
+ 
 
 export default function PromotionPackages () {
-    return <div> This is Promotion Packages Page </div>
+    return <div> <PromotionSection2/> </div>
 }

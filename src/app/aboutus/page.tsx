@@ -5,6 +5,7 @@ import About2 from "../../components/about2";
 import HeroImage from "@/components/HeroImage";
 import About_us3 from "../components/About_us3/About_us3";
 
+
 export default function AboutUs() {
   return (
     <>
@@ -15,6 +16,7 @@ export default function AboutUs() {
         <SustainabilitySection />
         <About2 />
         <About_us3/>
+        
       </main>
     </>
   );
