@@ -1,6 +1,10 @@
+"use client";
+import GalleryHero from "../../components/gallery/GalleryHero";
 
-"use client"; 
-
-export default function  Gallery ()  {
-    return  <div> Gallery Page </div> 
-};
+export default function Gallery() {
+  return (
+    <main>
+      <GalleryHero />
+    </main>
+  );
+}
