@@ -268,7 +268,7 @@ export default function Discover4() {
               {prevSelected && (
                 <div
                   style={{
-                    transition: `opacity ${transitionMs}ms ease`,
+                    transition: `opacity ${transitionMs}ms.ease`,
                     opacity: fadeActive ? 0 : 1,
                     position: "absolute",
                     left: 0,
@@ -337,7 +337,7 @@ export default function Discover4() {
                   {images[selected].description}
                 </p>
 
-                <a href="#" aria-label="Explore More">
+                <a href="/restaurantAndhealth" aria-label="Explore More">
                   <button
                     type="button"
                     className="text-white p-3 px-4 rounded-2xl"
@@ -523,12 +523,24 @@ export default function Discover4() {
         <div style={{ height: 10 }} />
 
         {/* Mobile headimage*/}
-
         <div
-          className="mx-auto w-[450px] max-w-full 2xl:w-full"
-          style={mainImageWrapperStyle}
+          className=""
+          style={{
+            width: 456, // fixed width
+            maxWidth: "100%",
+            padding: "8px 6px", // top/bottom 8px, left/right 16px
+            boxSizing: "border-box",
+          }}
         >
-          <div style={mainImageStyle}>
+          <div
+            style={{
+              width: "100%",
+              height: 230, // fixed height
+              borderRadius: 16, // radius 16px
+              overflow: "hidden",
+              position: "relative",
+            }}
+          >
             {/* previous layer (if present) */}
             {prevSelected && (
               <div
@@ -543,7 +555,7 @@ export default function Discover4() {
                   src={images[prevSelected].main}
                   alt={images[prevSelected].title}
                   fill
-                  style={{ objectFit: "cover", borderRadius: 32 }}
+                  style={{ objectFit: "cover" }}
                   priority
                 />
               </div>
@@ -562,7 +574,7 @@ export default function Discover4() {
                 src={images[selected].main}
                 alt={images[selected].title}
                 fill
-                style={{ objectFit: "cover", borderRadius: 32 }}
+                style={{ objectFit: "cover" }}
                 priority
               />
             </div>
@@ -576,7 +588,7 @@ export default function Discover4() {
               {prevSelected && (
                 <div
                   style={{
-                    transition: `opacity ${transitionMs}ms ease`,
+                    transition: `opacity ${transitionMs}ms.ease`,
                     opacity: fadeActive ? 0 : 1,
                     position: "absolute",
                     left: 0,
@@ -587,7 +599,7 @@ export default function Discover4() {
                   <h2
                     style={{
                       color: "#FCF9F6",
-                      fontSize: 35,
+                      fontSize: 30,
                       fontWeight: 700,
                       textShadow: "0 6px 20px rgba(0,0,0,0.5)",
                       margin: 0,
@@ -613,8 +625,9 @@ export default function Discover4() {
               )}
 
               <div
+                className="pt-29 pr-3"
                 style={{
-                  transition: `opacity ${transitionMs}ms ease`,
+                  transition: `opacity ${transitionMs}ms.ease`,
                   opacity: prevSelected ? (fadeActive ? 1 : 0) : 1,
                   fontFamily,
                 }}
@@ -622,7 +635,7 @@ export default function Discover4() {
                 <h2
                   style={{
                     color: "#FCF9F6",
-                    fontSize: 35,
+                    fontSize: 16,
                     fontWeight: 700,
                     textShadow: "0 6px 20px rgba(0,0,0,0.5)",
                     margin: 0,
@@ -632,11 +645,13 @@ export default function Discover4() {
                   {images[selected].title}
                 </h2>
                 <p
-                  className="mb-3"
+                  className="mb-3 mr-7"
                   style={{
                     color: "#FCF9F6",
-                    fontSize: 20,
+                    fontSize: 14,
                     maxWidth: 520,
+
+                    fontWeight: 200,
                     marginTop: 12,
                     textShadow: "0 6px 20px rgba(0,0,0,0.45)",
                     fontFamily,
@@ -645,10 +660,10 @@ export default function Discover4() {
                   {images[selected].description}
                 </p>
 
-                <a href="#" aria-label="Explore More">
+                <a href="/restaurantAndhealth" aria-label="Explore More">
                   <button
                     type="button"
-                    className="text-white p-3 px-4 rounded-2xl"
+                    className="text-white p-2 px-3 rounded-xl mt-2"
                     style={{
                       cursor: "pointer",
                       background: "rgba(255,255,255,0.04)",
@@ -658,6 +673,7 @@ export default function Discover4() {
                       transition:
                         "background-color 160ms ease, transform 80ms ease",
                       fontFamily,
+                      fontSize: "6",
                     }}
                     onMouseEnter={(e) =>
                       (e.currentTarget.style.background =
@@ -754,11 +770,3 @@ export default function Discover4() {
     </section>
   );
 }
-
-
-
-
-
-
-
-
