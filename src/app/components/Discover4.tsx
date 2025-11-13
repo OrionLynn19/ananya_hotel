@@ -723,13 +723,13 @@ export default function Discover4() {
             <div
               key={`mobile-thumb-${i}`}
               style={{
-                width: 62.32,
-                height: 100,
+                width: 86,
+                height: 138,
                 borderRadius: 8,
                 overflow: "hidden",
-                flex: "0 0 62.32px",
+                flex: "0 0 86px",
                 boxShadow: "0 4px 14px rgba(0,0,0,0.06)",
-                transform: i % 2 === 1 ? "translateY(18px)" : "translateY(0)",
+                transform: i % 2 === 1 ? "translateY(24px)" : "translateY(0)",
                 transition: "transform 160ms ease",
                 background: "#fff",
               }}
@@ -737,8 +737,8 @@ export default function Discover4() {
               <Image
                 src={src}
                 alt={`mobile-thumb-${i + 1}`}
-                width={62}
-                height={100}
+                width={86}
+                height={138}
                 style={{
                   width: "100%",
                   height: "100%",
