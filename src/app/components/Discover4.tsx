@@ -473,7 +473,7 @@ export default function Discover4() {
               boxSizing: "border-box",
             }}
           >
-            <button
+            <button  
               aria-pressed={selected === "restaurant"}
               onClick={() => handleSelect("restaurant")}
               style={{
@@ -491,6 +491,7 @@ export default function Discover4() {
                 justifyContent: "center",
                 cursor: "pointer",
                 fontFamily,
+                
               }}
             >
               Restaurant
@@ -524,11 +525,11 @@ export default function Discover4() {
 
         {/* Mobile headimage*/}
         <div
-          className=""
+          className="mx-auto"
           style={{
-            width: 456, // fixed width
+            width: 406, // fixed width
             maxWidth: "100%",
-            padding: "8px 6px", // top/bottom 8px, left/right 16px
+            padding: "8px 16px", // top/bottom 8px, left/right 16px
             boxSizing: "border-box",
           }}
         >
@@ -599,7 +600,7 @@ export default function Discover4() {
                   <h2
                     style={{
                       color: "#FCF9F6",
-                      fontSize: 30,
+                      fontSize: 16,
                       fontWeight: 700,
                       textShadow: "0 6px 20px rgba(0,0,0,0.5)",
                       margin: 0,
@@ -612,7 +613,8 @@ export default function Discover4() {
                     className="mb-3"
                     style={{
                       color: "#FCF9F6",
-                      fontSize: 20,
+                      fontSize: 14,
+                      fontWeight: 200,
                       maxWidth: 520,
                       marginTop: 12,
                       textShadow: "0 6px 20px rgba(0,0,0,0.45)",
@@ -625,12 +627,11 @@ export default function Discover4() {
               )}
 
               <div
-                className="pt-29 pr-3"
+              className="pt-26"
                 style={{
                   transition: `opacity ${transitionMs}ms.ease`,
                   opacity: prevSelected ? (fadeActive ? 1 : 0) : 1,
-                  fontFamily,
-                }}
+                  fontFamily,              }}
               >
                 <h2
                   style={{
@@ -645,13 +646,11 @@ export default function Discover4() {
                   {images[selected].title}
                 </h2>
                 <p
-                  className="mb-3 mr-7"
+                  className="mb-3"
                   style={{
                     color: "#FCF9F6",
                     fontSize: 14,
                     maxWidth: 520,
-
-                    fontWeight: 200,
                     marginTop: 12,
                     textShadow: "0 6px 20px rgba(0,0,0,0.45)",
                     fontFamily,
@@ -660,10 +659,10 @@ export default function Discover4() {
                   {images[selected].description}
                 </p>
 
-                <a href="/restaurantAndhealth" aria-label="Explore More">
+                <a href="/resturantAndhealth" aria-label="Explore More">
                   <button
                     type="button"
-                    className="text-white p-2 px-3 rounded-xl mt-2"
+                    className="text-white text-sm p-2 px-1 rounded-xl"
                     style={{
                       cursor: "pointer",
                       background: "rgba(255,255,255,0.04)",
@@ -673,7 +672,6 @@ export default function Discover4() {
                       transition:
                         "background-color 160ms ease, transform 80ms ease",
                       fontFamily,
-                      fontSize: "6",
                     }}
                     onMouseEnter={(e) =>
                       (e.currentTarget.style.background =
