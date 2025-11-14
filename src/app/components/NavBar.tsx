@@ -119,7 +119,7 @@ export default function Navbar() {
           top: isFixed ? 0 : undefined,
           left: isFixed ? 0 : undefined,
           right: isFixed ? 0 : undefined,
-          zIndex: isFixed ? 50 : undefined,
+          zIndex: 50,
         }}
       >
         <div
@@ -272,7 +272,7 @@ export default function Navbar() {
           top: isFixed ? 0 : undefined,
           left: isFixed ? 0 : undefined,
           right: isFixed ? 0 : undefined,
-          zIndex: isFixed ? 50 : undefined,
+          zIndex: 50
         }}
       >
         <div style={{ position: "relative", left: "-3px" }}>
