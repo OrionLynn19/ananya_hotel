@@ -5,6 +5,7 @@ import "swiper/css/effect-coverflow"; // Crucial for the 3D depth effect
 import "swiper/css/pagination";
 import Navbar from "./components/NavBar";
 import Footer from "./components/Footer";
+import HideNavFooter from "./HideNavFooter";
 
 
 export const metadata: Metadata = {
@@ -21,9 +22,7 @@ export default function RootLayout({
     <html lang="en">
 
       <body className="min-h-dvh flex flex-col bg-white text-neutral-900">
-        <Navbar />
-        <main className="flex flex-col">{children}</main>
-        <Footer />
+          <HideNavFooter>{children}</HideNavFooter>
 
       </body>
     </html>
