@@ -21,7 +21,7 @@ type BookingStatus = "IN_PROGRESS" | "COMPLETED" | "CANCELLED";
 type Booking = {
   id: string;
   title: string;
-  tag: string; // label shown on the right: Upcoming / Payment Pending / Completed / Cancelled
+  tag: string;
   amount: number;
   currency: string;
   guests: number;
@@ -34,7 +34,6 @@ type Booking = {
 };
 
 const BOOKINGS: Booking[] = [
-  // ----- IN PROGRESS -----
   {
     id: "1907534578",
     title: "Gallery Suite",
@@ -64,7 +63,6 @@ const BOOKINGS: Booking[] = [
     status: "IN_PROGRESS",
   },
 
-  // ----- COMPLETED (4 cards) -----
   {
     id: "1907534578-C1",
     title: "Urban Nest",
@@ -153,7 +151,7 @@ const BOOKINGS: Booking[] = [
 ];
 
 const STATUS_TABS: { id: BookingStatus; label: string }[] = [
-  { id: "IN_PROGRESS", label: "In Progress" },
+  { id: "IN_PROGRESS", label: "Progress" },
   { id: "COMPLETED", label: "Completed" },
   { id: "CANCELLED", label: "Cancelled" },
 ];
@@ -163,7 +161,6 @@ function BookingCard({ booking }: { booking: Booking }) {
   const isCompleted = booking.status === "COMPLETED";
   const isCancelled = booking.status === "CANCELLED";
 
-  // tag color
   const tagTextColorClass = isPaymentPending
     ? "text-[#D65445]"
     : isCompleted
@@ -177,19 +174,21 @@ function BookingCard({ booking }: { booking: Booking }) {
       className={`
         flex flex-col
         rounded-[26px]
-        border px-3 py-6
+        border px-4 py-5
         bg-gradient-to-b from-white/14 via-white/10 to-white/6
         shadow-[0_20px_60px_rgba(0,0,0,0.7)]
-        w-[580px]
-        min-h-[403px]
+        w-full md:w-[580px]
+        md:min-h-[403px]
       `}
     >
       {/* header row */}
-      <div className="flex items-center justify-between text-sm text-white">
-        <p className="md:text-[24px] font-[400]">
-          <span className="font-medium">ID:</span> {booking.id}
+      <div className="flex flex-col gap-1 md:flex-row md:items-center md:justify-between text-white">
+        <p className={`${poltawskiNowy.className} text-[14px] md:text-[24px] font-medium`}>
+          <span>ID:</span> {booking.id}
         </p>
-        <p className={`text-base md:text-[24px] font-medium ${tagTextColorClass}`}>
+        <p
+          className={`text-[12px] md:text-[24px] font-medium ${tagTextColorClass}`}
+        >
           {booking.tag}
         </p>
       </div>
@@ -197,9 +196,9 @@ function BookingCard({ booking }: { booking: Booking }) {
       <div className="mt-4 h-px w-full bg-white/50" />
 
       {/* content */}
-      <div className="mt-5 flex flex-1 gap-5">
+      <div className="mt-4 flex flex-col gap-4 md:mt-5 md:flex-row md:flex-1 md:gap-5">
         {/* room image */}
-        <div className="relative h-[156px] w-[156px] overflow-hidden rounded-[18px]">
+        <div className="relative h-[190px] w-full overflow-hidden rounded-[18px] md:h-[156px] md:w-[156px]">
           <Image
             src={booking.imageSrc}
             alt={booking.title}
@@ -209,38 +208,39 @@ function BookingCard({ booking }: { booking: Booking }) {
         </div>
 
         {/* text */}
-        <div className="flex flex-col justify-between">
-          <div className="flex items-start justify-between gap-2">
-            <div className="space-y-2 md:text-[18px] font-medium text-white/80">
-              <p className="text-white pb-10">{booking.title}</p>
-              <p className="text-white/75">
+        <div className="flex flex-col justify-between flex-1">
+          <div className="flex flex-row items-start justify-between md:gap-2">
+            <div className="space-y-2 text-white md:text-[18px] text-[12px]">
+              <p className={`pb-2 md:pb-10 ${poltawskiNowy.className} font-bold text-[14px] md:text-[18px]`}>{booking.title}</p>
+              <p>
                 {booking.guests} guests&nbsp;&nbsp;&nbsp;{booking.rooms} room
               </p>
-              <p className=" text-white/75">
+              <p>
                 {booking.startDate} - {booking.endDate}
               </p>
-              <p className="text-white/75">
-                Location: {booking.location}
-              </p>
+              <p>Location: {booking.location}</p>
             </div>
 
-            <div className="text-left text-white/80">
-              <p className="md:text-[18px] font-medium">Total Amount</p>
-              <p className="mt-1 text-[22px] font-medium text-white">
+            <div className="mt-0 text-left text-white">
+              <p className="text-[12px] md:text-[18px] font-medium">
+                Total Amount
+              </p>
+              <p className="mt-1 text-[12px] md:text-[22px] font-medium text-white">
                 {booking.currency} {booking.amount.toLocaleString("en-US")}
               </p>
             </div>
           </div>
 
-          <div className="mt-4 h-px w-full bg-white/15" />
+          <div className="mt-4 h-px w-full bg-white/50" />
 
           {/* buttons */}
-          <div className="mt-4 flex justify-end gap-4">
+          <div className="mt-4 flex flex-row gap-3 justify-end md:gap-4">
             <button
               className="
+                w-[120px] md:w-auto
                 rounded-full border border-white/60
                 bg-gradient-to-r from-white/10 to-white/0
-                px-6 py-2 md:text-[18px] font-medium text-white
+                px-1 py-2 text-[12px] md:text-[18px] font-medium text-white
                 shadow-[0_0_0_1px_rgba(255,255,255,0.08)]
                 transition hover:bg-white/15
               "
@@ -250,9 +250,10 @@ function BookingCard({ booking }: { booking: Booking }) {
 
             <button
               className="
+                w-[80px] md:w-auto
                 rounded-full border border-white/60
                 bg-gradient-to-r from-white/10 to-white/0
-                px-6 py-2 md:text-[18px] font-medium text-white
+                px-2 py-2 text-[12px] md:text-[18px] font-medium text-white
                 shadow-[0_0_0_1px_rgba(255,255,255,0.08)]
                 transition hover:bg-white/15
               "
@@ -275,15 +276,28 @@ export default function MyBookingsPage() {
   );
 
   return (
-    <main
-      className={`
-        relative min-h-screen w-full
-      `}
-    >
-      <div className="mx-auto flex w-full max-w-[1400px] flex-col">
-        <header className="mb-10 text-center">
+    <main className="relative min-h-screen w-full">
+      <div className="relative mx-auto flex w-full max-w-[1400px] flex-col">
+        {/* MOBILE */}
+        <button
+          type="button"
+          className="
+            absolute right-0 -top-1 z-10
+            md:hidden
+            rounded-full border border-white/60
+            bg-transparent px-3 py-2
+            text-[9px] font-medium text-[#FCF9F6]
+            shadow-[0_0_0_1px_rgba(255,255,255,0.08)]
+            transition hover:bg-white/10
+          "
+        >
+          Contact Support
+        </button>
+
+        {/* DESKTOP heading */}
+        <header className="mb-6 hidden md:mb-10 md:block text-center">
           <h1
-            className={`${poltawskiNowy.className} text-4xl font-bold md:text-[48px]`}
+            className={`${poltawskiNowy.className} text-3xl font-bold md:text-[48px]`}
           >
             My Bookings
           </h1>
@@ -292,21 +306,22 @@ export default function MyBookingsPage() {
         <section
           className="
             relative w-full
+            mt-14 md:mt-0
             rounded-[40px]
             border border-white/18
             bg-gradient-to-br from-white/18 via-white/10 to-white/6
-            px-5 py-8
+            px-4 py-6 md:px-5 md:py-8
             shadow-[0_32px_120px_rgba(0,0,0,0.7)]
             backdrop-blur-sm
           "
         >
           <div className="relative">
-            {/* Tabs + Contact */}
-            <div className="mb-8 flex items-center justify-between gap-6">
-              {/* GLASS OUTER PILL */}
+            {/* Tabs + (desktop) Contact */}
+            <div className="mb-6 flex flex-col gap-4 md:mb-8 md:flex-row md:items-center md:justify-between md:gap-6">
+              {/* tabs */}
               <div
                 className="
-                  inline-flex items-center gap-2
+                  inline-flex w-full md:w-auto items-center gap-2
                   rounded-full border border-neutral-400/25
                   bg-neutral-400/20
                   px-2 py-2
@@ -322,12 +337,11 @@ export default function MyBookingsPage() {
                       key={tab.id}
                       type="button"
                       onClick={() => setActiveStatus(tab.id)}
-                      className="relative"
+                      className="relative flex-1 md:flex-none"
                     >
-                      {/* inner pill (for the stroked active effect) */}
                       <span
                         className={`
-                          block rounded-full px-7 py-2 md:text-[18px] font-medium tracking-wide
+                          block text-center rounded-full px-4 py-2  md:px-7 text-[12px] md:text-[18px] font-medium tracking-wide
                           ${
                             isActive
                               ? `
@@ -349,13 +363,14 @@ export default function MyBookingsPage() {
                 })}
               </div>
 
-              {/* Contact Support button can stay as you have it */}
+              {/* DESKTOP */}
               <button
                 type="button"
                 className="
+                  hidden md:block
                   rounded-full border border-white/60
                   bg-transparent px-6 py-2
-                  md:text-[18px] font-medium text-white
+                  text-sm md:text-[18px] font-medium text-white
                   shadow-[0_0_0_1px_rgba(255,255,255,0.08)]
                   transition hover:bg-white/10
                 "
@@ -364,9 +379,7 @@ export default function MyBookingsPage() {
               </button>
             </div>
 
-
-            {/* bookings grid */}
-            <div className="grid gap-6 md:grid-cols-2">
+            <div className="grid gap-5 md:gap-6 md:grid-cols-2">
               {filteredBookings.map((booking) => (
                 <BookingCard key={booking.id} booking={booking} />
               ))}
