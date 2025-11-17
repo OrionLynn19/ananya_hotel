@@ -118,11 +118,10 @@ const BOOKINGS: Booking[] = [
     startDate: "16, Sep, 2025",
     endDate: "19, Sep, 2025",
     location: "Hua Hin",
-    imageSrc: "/images/rooms/superior-comfort.jpg", // make sure file exists
+    imageSrc: "/images/rooms/superior-comfort.jpg",
     status: "COMPLETED",
   },
 
-  // ----- CANCELLED (2 cards) -----
   {
     id: "1907534578-X1",
     title: "Urban Nest",
@@ -178,24 +177,24 @@ function BookingCard({ booking }: { booking: Booking }) {
       className={`
         flex flex-col
         rounded-[26px]
-        border px-8 py-6
+        border px-3 py-6
         bg-gradient-to-b from-white/14 via-white/10 to-white/6
         shadow-[0_20px_60px_rgba(0,0,0,0.7)]
-        w-[557px]
+        w-[580px]
         min-h-[403px]
       `}
     >
       {/* header row */}
       <div className="flex items-center justify-between text-sm text-white">
-        <p className="tracking-[0.05em]">
+        <p className="md:text-[24px] font-[400]">
           <span className="font-medium">ID:</span> {booking.id}
         </p>
-        <p className={`text-base font-semibold ${tagTextColorClass}`}>
+        <p className={`text-base md:text-[24px] font-medium ${tagTextColorClass}`}>
           {booking.tag}
         </p>
       </div>
 
-      <div className="mt-4 h-px w-full bg-white/15" />
+      <div className="mt-4 h-px w-full bg-white/50" />
 
       {/* content */}
       <div className="mt-5 flex flex-1 gap-5">
@@ -211,23 +210,23 @@ function BookingCard({ booking }: { booking: Booking }) {
 
         {/* text */}
         <div className="flex flex-col justify-between">
-          <div className="flex items-start justify-between gap-4">
-            <div className="space-y-1 text-sm text-white/80">
-              <p className="font-semibold text-white">{booking.title}</p>
-              <p className="text-[13px] text-white/75">
+          <div className="flex items-start justify-between gap-2">
+            <div className="space-y-2 md:text-[18px] font-medium text-white/80">
+              <p className="text-white pb-10">{booking.title}</p>
+              <p className="text-white/75">
                 {booking.guests} guests&nbsp;&nbsp;&nbsp;{booking.rooms} room
               </p>
-              <p className="text-[13px] text-white/75">
+              <p className=" text-white/75">
                 {booking.startDate} - {booking.endDate}
               </p>
-              <p className="text-[13px] text-white/75">
+              <p className="text-white/75">
                 Location: {booking.location}
               </p>
             </div>
 
-            <div className="text-right text-sm text-white/80">
-              <p>Total Amount</p>
-              <p className="mt-1 text-[22px] font-semibold text-white">
+            <div className="text-left text-white/80">
+              <p className="md:text-[18px] font-medium">Total Amount</p>
+              <p className="mt-1 text-[22px] font-medium text-white">
                 {booking.currency} {booking.amount.toLocaleString("en-US")}
               </p>
             </div>
@@ -241,7 +240,7 @@ function BookingCard({ booking }: { booking: Booking }) {
               className="
                 rounded-full border border-white/60
                 bg-gradient-to-r from-white/10 to-white/0
-                px-6 py-2 text-sm font-medium text-white
+                px-6 py-2 md:text-[18px] font-medium text-white
                 shadow-[0_0_0_1px_rgba(255,255,255,0.08)]
                 transition hover:bg-white/15
               "
@@ -253,7 +252,7 @@ function BookingCard({ booking }: { booking: Booking }) {
               className="
                 rounded-full border border-white/60
                 bg-gradient-to-r from-white/10 to-white/0
-                px-6 py-2 text-sm font-medium text-white
+                px-6 py-2 md:text-[18px] font-medium text-white
                 shadow-[0_0_0_1px_rgba(255,255,255,0.08)]
                 transition hover:bg-white/15
               "
@@ -281,10 +280,10 @@ export default function MyBookingsPage() {
         relative min-h-screen w-full
       `}
     >
-      <div className="mx-auto flex w-full max-w-[1300px] flex-col">
+      <div className="mx-auto flex w-full max-w-[1400px] flex-col">
         <header className="mb-10 text-center">
           <h1
-            className={`${poltawskiNowy.className} text-4xl font-semibold tracking-wide md:text-5xl`}
+            className={`${poltawskiNowy.className} text-4xl font-bold md:text-[48px]`}
           >
             My Bookings
           </h1>
@@ -296,7 +295,7 @@ export default function MyBookingsPage() {
             rounded-[40px]
             border border-white/18
             bg-gradient-to-br from-white/18 via-white/10 to-white/6
-            px-10 py-8
+            px-5 py-8
             shadow-[0_32px_120px_rgba(0,0,0,0.7)]
             backdrop-blur-sm
           "
@@ -304,36 +303,59 @@ export default function MyBookingsPage() {
           <div className="relative">
             {/* Tabs + Contact */}
             <div className="mb-8 flex items-center justify-between gap-6">
-              <div className="rounded-full border border-white/35 bg-white/5 px-1 py-1">
-                <div className="flex items-center gap-1">
-                  {STATUS_TABS.map((tab) => {
-                    const isActive = tab.id === activeStatus;
-                    return (
-                      <button
-                        key={tab.id}
-                        onClick={() => setActiveStatus(tab.id)}
+              {/* GLASS OUTER PILL */}
+              <div
+                className="
+                  inline-flex items-center gap-2
+                  rounded-full border border-neutral-400/25
+                  bg-neutral-400/20
+                  px-2 py-2
+                  shadow-[0_18px_45px_rgba(0,0,0,0.55)]
+                  backdrop-blur-sm
+                "
+              >
+                {STATUS_TABS.map((tab) => {
+                  const isActive = tab.id === activeStatus;
+
+                  return (
+                    <button
+                      key={tab.id}
+                      type="button"
+                      onClick={() => setActiveStatus(tab.id)}
+                      className="relative"
+                    >
+                      {/* inner pill (for the stroked active effect) */}
+                      <span
                         className={`
-                          rounded-full px-6 py-2 text-sm font-medium tracking-wide
-                          transition
+                          block rounded-full px-7 py-2 md:text-[18px] font-medium tracking-wide
                           ${
                             isActive
-                              ? "bg-gradient-to-r from-white to-white/90 text-[#242426] shadow-[0_4px_10px_rgba(0,0,0,0.35)]"
-                              : "text-white/70 hover:bg-white/10"
+                              ? `
+                               bg-neutral-400/20 border
+                                text-white
+                                backdrop-blur-lg 
+                              `
+                              : `
+                                text-white/75
+                                hover:text-white hover:bg-white/5
+                              `
                           }
                         `}
                       >
                         {tab.label}
-                      </button>
-                    );
-                  })}
-                </div>
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
 
+              {/* Contact Support button can stay as you have it */}
               <button
+                type="button"
                 className="
                   rounded-full border border-white/60
                   bg-transparent px-6 py-2
-                  text-sm font-medium text-white
+                  md:text-[18px] font-medium text-white
                   shadow-[0_0_0_1px_rgba(255,255,255,0.08)]
                   transition hover:bg-white/10
                 "
@@ -341,6 +363,7 @@ export default function MyBookingsPage() {
                 Contact Support
               </button>
             </div>
+
 
             {/* bookings grid */}
             <div className="grid gap-6 md:grid-cols-2">
