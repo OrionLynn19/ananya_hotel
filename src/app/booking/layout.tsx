@@ -261,20 +261,19 @@ export default function BookingLayout({
                 </Link>
 
                 <Link
-                    href="/booking/signin"
-                   onClick={() => setIsMobileMenuOpen(false)}
-                   className="block"
-                  >
+                  href="/booking/signin"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="block"
+                >
                   Sign in
                 </Link>
-
               </nav>
             </div>
           </div>
         )}
 
         {/* 🔹 PAGE CONTENT */}
-        <main className="mx-auto max-w-7xl px-6 py-10">{children}</main>
+        <main>{children}</main>
       </div>
     </div>
   );
