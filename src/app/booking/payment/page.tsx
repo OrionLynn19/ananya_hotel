@@ -13,12 +13,12 @@ export default function PaymentPage() {
     const [arrivedBy, setArrivedBy] = useState("");
     const [specialRequest, setSpecialRequest] = useState("");
 
-    const inputClass = "text-white placeholder-white/70 w-full h-10 rounded-lg mt-5 bg-[#7c6d58]/12 border backdrop-blur-lg border-[#ffffff]/20 px-3";
+    const inputClass = "text-white md:text-base text-xs placeholder-white/70 w-full h-10 rounded-lg mt-5 bg-[#7c6d58]/12 border backdrop-blur-lg border-[#ffffff]/20 px-3";
 
     return (
         <>
-            <div className="w-full max-w-4xl h-screen md:py-15 py-10 md:px-10 px-5 text-white bg-[#463214]/6 backdrop-blur-2xl inset-shadow-xs inset-shadow-white/50 rounded-3xl overflow-y-scroll scrollbar-hide">
-                <div className="w-full">
+            <div className="w-full max-w-4xl h-screen md:py-15 py-10 md:px-10 px-7 text-white bg-[#463214]/6 backdrop-blur-2xl inset-shadow-xs inset-shadow-white/50 rounded-3xl overflow-y-scroll scrollbar-hide">
+                <div className="">
                     <h1 className="font-poltawski font-bold md:text-3xl text-xl ">Enter Your Details</h1>
 
                     <div className="block md:hidden mb-5 mt-8 w-1/2">
@@ -116,7 +116,7 @@ export default function PaymentPage() {
                             </div>
                         </div>
                     </div>
-                    
+
                     <div className="block md:hidden mb-10">
                         <label className="font-poltawski text-base">Email Address</label>
                         <input
@@ -135,7 +135,7 @@ export default function PaymentPage() {
                             value={couponCode}
                             onChange={(e) => setCouponCode(e.target.value)}
                             placeholder="Enter Coupon Code"
-                            className="text-white placeholder-white/70 md:w-1/2 w-full h-10 rounded-lg bg-[#7c6d58]/12 border backdrop-blur-lg border-[#ffffff]/20 px-3"
+                            className="text-white md:text-base text-xs placeholder-white/70 md:w-1/2 w-full h-10 rounded-lg bg-[#7c6d58]/12 border backdrop-blur-lg border-[#ffffff]/20 px-3"
                         />
                         <button className="bg-[#7c6d58]/30 active:scale-95 transition-transform  inset-shadow-xs inset-shadow-white/50 border backdrop-blur-lg border-[#ffffff]/20 text-white/80 font-medium py-2 px-6 rounded-2xl">
                             Apply
@@ -153,7 +153,7 @@ export default function PaymentPage() {
                                 { src: "/images/card3.png", label: "Mobile Banking" },
                             ].map((item, idx) => (
                                 <div key={idx} className="flex items-center md:gap-3 gap-2">
-                                    <Image src={item.src} alt={item.label} width={50} height={50} />
+                                    <Image src={item.src} alt={item.label} width={50} height={50} className="w-10 h-9 md:w-[50px] md:h-[45px]" />
                                     <label className="text-white md:font-medium font-normal md:text-lg text-xs">{item.label}</label>
                                 </div>
                             ))}
@@ -163,7 +163,7 @@ export default function PaymentPage() {
                             <h1 className="md:font-medium font-normal text-center md:text-lg text-xs">We accept the following payment methods.</h1>
                             <div className="flex gap-3 justify-center mt-3">
                                 {["/images/card4.png", "/images/card5.png", "/images/card6.png"].map((src, idx) => (
-                                    <Image key={idx} src={src} alt="payment method" width={50} height={50} />
+                                    <Image key={idx} src={src} alt="payment method" width={50} height={50} className="w-10 h-9 md:w-[50px] md:h-[45px]" />
                                 ))}
                             </div>
                         </div>
@@ -187,10 +187,15 @@ export default function PaymentPage() {
                                 value={specialRequest}
                                 onChange={(e) => setSpecialRequest(e.target.value)}
                                 placeholder="eg. bed preference"
-                                className="text-white placeholder-white/70 w-full h-40 rounded-lg mt-5 bg-[#7c6d58]/12 border backdrop-blur-lg border-[#ffffff]/20 p-3"
+                                className="text-white md:text-base text-xs placeholder-white/70 w-full h-40 rounded-lg mt-5 bg-[#7c6d58]/12 border backdrop-blur-lg border-[#ffffff]/20 p-3"
                             >
                             </textarea>
                         </div>
+                    </div>
+                    <div className="flex justify-center">
+                        <button className="md:hidden bg-[#7c6d58]/30 active:scale-95 transition-transform  inset-shadow-xs inset-shadow-white/50 border backdrop-blur-lg border-[#ffffff]/20 text-white/80 font-medium py-2 px-6 rounded-2xl">
+                            Confirm
+                        </button>
                     </div>
 
                 </div>
