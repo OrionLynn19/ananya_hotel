@@ -3,6 +3,7 @@ import FaqHero from "../components/FaqHero";
 import FaqAccordion from "../components/FaqAccordion";
 import { FAQ_DATA } from "@/app/data/faq.data";
 import FAQ2 from "../components/FAQsec2";
+import FAQ3 from "../components/Faq3";
 export default function FaqAndContactUs () {
     return <div> <main className="bg-white overflow-x-hidden">
       <FaqHero />
@@ -12,6 +13,8 @@ export default function FaqAndContactUs () {
       </section>
       </main>
       <FAQ2 />
+      <FAQ3 />
      </div>   
+
 
 }
