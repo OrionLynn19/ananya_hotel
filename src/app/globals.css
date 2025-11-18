@@ -29,6 +29,23 @@ body {
   font-family: var(--font-poltawski) !important;
 }
 
+.swiper-pagination-custom-mobile .swiper-pagination-bullet {
+  width: 12px;            /* increase dot size */
+  height: 12px;
+  background-color: #D4CFC9; /* inactive dot color */
+  opacity: 1;             /* keep them visible */
+  margin: 0 4px;          /* spacing between dots */
+  border-radius: 9999px;  /* make them fully round */
+  transition: all 0.3s ease;
+}
+
+.swiper-pagination-custom-mobile .swiper-pagination-bullet-active {
+  width: 14px;            /* slightly larger active dot */
+  height: 14px;
+  background-color: #463214; /* active dot color */
+}
+
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
