@@ -433,7 +433,7 @@ export default function Booking() {
               >
                 <button
                   type="button"
-                  onClick={() => router.push("/booking/my-bookings")}
+                  onClick={() => router.push("/booking/rooms")}
                   className="w-full rounded-lg px-6 py-3 border border-white/70 bg-white/5 backdrop-blur-sm text-white hover:opacity-95 min-[1600px]:px-10 min-[1600px]:py-4 min-[1600px]:min-w-[220px] cursor-pointer hover:bg-white/10"
                   style={font}
                 >
@@ -881,182 +881,295 @@ export default function Booking() {
 
       {/* --- MOBILE ONLY LAYOUT (<640px) --- */}
 
-<div className="sm:hidden w-full max-w-[520px] px-4 mx-auto flex flex-col items-stretch mt-8">
-  {/* Row 1: Location + Guests */}
-  <div className="grid grid-cols-2 gap-4">
-    {/* Location */}
-    <div ref={locationRefSmall} className="relative">
-      <div
-        className="flex items-center rounded-lg border border-white/90 bg-white/5 backdrop-blur-sm px-3 py-[10px] cursor-pointer hover:bg-white/10"
-        role="button"
-        onClick={() => setIsLocationOpen(true)}
-      >
-        <Image src="/images/search.png" alt="Search" width={18} height={18} className="mr-3" />
-        <input
-          aria-label="Location"
-          placeholder="Hua Hin"
-          value={locationValue}
-          onChange={(e) => { setLocationValue(e.target.value); setIsLocationOpen(true); }}
-          onFocus={() => setIsLocationOpen(true)}
-          className="flex-1 bg-transparent text-white placeholder-white/90 focus:outline-none text-sm"
-          style={font}
-        />
-      </div>
-      {isLocationOpen && (
-        <div className="absolute left-0 top-full mt-2 w-full rounded-lg border border-white/90 bg-white/5 backdrop-blur-md shadow-lg z-50 overflow-hidden">
-          {suggestions.map((s, i) => (
+      <div className="sm:hidden w-full max-w-[520px] px-4 mx-auto flex flex-col items-stretch mt-8">
+        {/* Row 1: Location + Guests */}
+        <div className="grid grid-cols-2 gap-4">
+          {/* Location */}
+          <div ref={locationRefSmall} className="relative">
             <div
-              key={s}
-              onMouseEnter={() => setHighlightIdx(i)}
-              onMouseDown={(ev) => { ev.preventDefault(); onSuggestionSelect(s); }}
-              className={
-                "px-3 py-2 text-white text-sm underline decoration-white/40 cursor-pointer " +
-                (highlightIdx === i ? "bg-gray-700" : "")
-              }
+              className="flex items-center rounded-lg border border-white/90 bg-white/5 backdrop-blur-sm px-3 py-[10px] cursor-pointer hover:bg-white/10"
+              role="button"
+              onClick={() => setIsLocationOpen(true)}
             >
-              {s}
+              <Image
+                src="/images/search.png"
+                alt="Search"
+                width={18}
+                height={18}
+                className="mr-3"
+              />
+              <input
+                aria-label="Location"
+                placeholder="Hua Hin"
+                value={locationValue}
+                onChange={(e) => {
+                  setLocationValue(e.target.value);
+                  setIsLocationOpen(true);
+                }}
+                onFocus={() => setIsLocationOpen(true)}
+                className="flex-1 bg-transparent text-white placeholder-white/90 focus:outline-none text-sm"
+                style={font}
+              />
             </div>
-          ))}
-        </div>
-      )}
-    </div>
+            {isLocationOpen && (
+              <div className="absolute left-0 top-full mt-2 w-full rounded-lg border border-white/90 bg-white/5 backdrop-blur-md shadow-lg z-50 overflow-hidden">
+                {suggestions.map((s, i) => (
+                  <div
+                    key={s}
+                    onMouseEnter={() => setHighlightIdx(i)}
+                    onMouseDown={(ev) => {
+                      ev.preventDefault();
+                      onSuggestionSelect(s);
+                    }}
+                    className={
+                      "px-3 py-2 text-white text-sm underline decoration-white/40 cursor-pointer " +
+                      (highlightIdx === i ? "bg-gray-700" : "")
+                    }
+                  >
+                    {s}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
 
-    {/* Guests */}
-    <div ref={guestsRefSmall} className="relative">
-      <button
-        onClick={openGuestsModal}
-        className="w-full rounded-lg border border-white/90 bg-white/5 backdrop-blur-sm px-3 py-[10px] text-white text-left text-sm hover:bg-white/10 flex items-center justify-between"
-        style={font}
-      >
-        <div className="leading-tight">
-          {adults} Adults & {children} Kid
-          <div className="text-white/70 text-[10px] mt-1">
-            {rooms} Room{rooms > 1 ? "s" : ""}
+          {/* Guests */}
+          <div ref={guestsRefSmall} className="relative">
+            <button
+              onClick={openGuestsModal}
+              className="w-full rounded-lg border border-white/90 bg-white/5 backdrop-blur-sm px-3 py-[10px] text-white text-left text-sm hover:bg-white/10 flex items-center justify-between"
+              style={font}
+            >
+              <div className="leading-tight">
+                {adults} Adults & {children} Kid
+                <div className="text-white/70 text-[10px] mt-1">
+                  {rooms} Room{rooms > 1 ? "s" : ""}
+                </div>
+              </div>
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                className="text-white/80"
+              >
+                <path fill="currentColor" d="M9 18l6-6-6-6" />
+              </svg>
+            </button>
+
+            {/* Centered Guests Modal (mobile) */}
+            {guestsModalOpen && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center">
+                <div
+                  className="absolute inset-0 bg-black/40"
+                  onClick={cancelGuestsModal}
+                />
+                <div className="relative z-60 w-[92vw] max-w-[520px] rounded-xl border border-white/90 bg-white/5 backdrop-blur-lg shadow-2xl p-6">
+                  <div className="text-white mb-4 text-base" style={font}>
+                    Rooms & Guests
+                  </div>
+
+                  <div className="flex flex-col gap-4">
+                    {/* Rooms */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-white text-sm" style={font}>
+                        Rooms
+                      </span>
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={() => setTmpRooms(Math.max(1, tmpRooms - 1))}
+                          className="w-8 h-8 rounded-md border border-white/90 text-white"
+                        >
+                          −
+                        </button>
+                        <span className="text-white text-sm">{tmpRooms}</span>
+                        <button
+                          onClick={() => setTmpRooms(tmpRooms + 1)}
+                          className="w-8 h-8 rounded-md border border-white/90 text-white"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Adults */}
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="text-white text-sm" style={font}>
+                          Adults
+                        </div>
+                        <div className="text-white/60 text-[11px]">
+                          ages 13 or above
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={() =>
+                            setTmpAdults(Math.max(1, tmpAdults - 1))
+                          }
+                          className="w-8 h-8 rounded-md border border-white/90 text-white"
+                        >
+                          −
+                        </button>
+                        <span className="text-white text-sm">{tmpAdults}</span>
+                        <button
+                          onClick={() => setTmpAdults(tmpAdults + 1)}
+                          className="w-8 h-8 rounded-md border border-white/90 text-white"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Children */}
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="text-white text-sm" style={font}>
+                          Children
+                        </div>
+                        <div className="text-white/60 text-[11px]">
+                          ages 0-12
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={() =>
+                            setTmpChildren(Math.max(0, tmpChildren - 1))
+                          }
+                          className="w-8 h-8 rounded-md border border-white/90 text-white"
+                        >
+                          −
+                        </button>
+                        <span className="text-white text-sm">
+                          {tmpChildren}
+                        </span>
+                        <button
+                          onClick={() => setTmpChildren(tmpChildren + 1)}
+                          className="w-8 h-8 rounded-md border border-white/90 text-white"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="flex justify-end gap-3 mt-2">
+                      <button
+                        onClick={cancelGuestsModal}
+                        className="px-4 py-2 rounded-md border border-white/90 text-white text-xs"
+                        style={font}
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={applyGuestsModal}
+                        className="px-5 py-2 rounded-md bg-white/10 border border-white/90 text-white text-xs"
+                        style={font}
+                      >
+                        Apply
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
-        <svg width="18" height="18" viewBox="0 0 24 24" className="text-white/80">
-          <path fill="currentColor" d="M9 18l6-6-6-6" />
-        </svg>
-      </button>
 
-      {/* Centered Guests Modal (mobile) */}
-      {guestsModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="absolute inset-0 bg-black/40" onClick={cancelGuestsModal} />
-          <div className="relative z-60 w-[92vw] max-w-[520px] rounded-xl border border-white/90 bg-white/5 backdrop-blur-lg shadow-2xl p-6">
-            <div className="text-white mb-4 text-base" style={font}>
-              Rooms & Guests
+        {/* Row 2: Combined Dates + Book */}
+        <div className="grid grid-cols-3 gap-4 mt-5">
+          <div className="col-span-2">
+            <div className="text-[11px] text-white/70 mb-1" style={font}>
+              Check-in Date&nbsp;&nbsp;&nbsp;Check-out Date
             </div>
-
-            <div className="flex flex-col gap-4">
-              {/* Rooms */}
-              <div className="flex items-center justify-between">
-                <span className="text-white text-sm" style={font}>Rooms</span>
-                <div className="flex items-center gap-3">
-                  <button onClick={() => setTmpRooms(Math.max(1, tmpRooms - 1))} className="w-8 h-8 rounded-md border border-white/90 text-white">−</button>
-                  <span className="text-white text-sm">{tmpRooms}</span>
-                  <button onClick={() => setTmpRooms(tmpRooms + 1)} className="w-8 h-8 rounded-md border border-white/90 text-white">+</button>
-                </div>
-              </div>
-
-              {/* Adults */}
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="text-white text-sm" style={font}>Adults</div>
-                  <div className="text-white/60 text-[11px]">ages 13 or above</div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <button onClick={() => setTmpAdults(Math.max(1, tmpAdults - 1))} className="w-8 h-8 rounded-md border border-white/90 text-white">−</button>
-                  <span className="text-white text-sm">{tmpAdults}</span>
-                  <button onClick={() => setTmpAdults(tmpAdults + 1)} className="w-8 h-8 rounded-md border border-white/90 text-white">+</button>
-                </div>
-              </div>
-
-              {/* Children */}
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="text-white text-sm" style={font}>Children</div>
-                  <div className="text-white/60 text-[11px]">ages 0-12</div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <button onClick={() => setTmpChildren(Math.max(0, tmpChildren - 1))} className="w-8 h-8 rounded-md border border-white/90 text-white">−</button>
-                  <span className="text-white text-sm">{tmpChildren}</span>
-                  <button onClick={() => setTmpChildren(tmpChildren + 1)} className="w-8 h-8 rounded-md border border-white/90 text-white">+</button>
-                </div>
-              </div>
-
-              <div className="flex justify-end gap-3 mt-2">
-                <button onClick={cancelGuestsModal} className="px-4 py-2 rounded-md border border-white/90 text-white text-xs" style={font}>Cancel</button>
-                <button onClick={applyGuestsModal} className="px-5 py-2 rounded-md bg-white/10 border border-white/90 text-white text-xs" style={font}>Apply</button>
-              </div>
+            <button
+              onClick={openDateModal}
+              className="w-full rounded-lg border border-white/90 bg-white/5 backdrop-blur-sm px-3 py-3 text-white text-xs hover:bg-white/10 flex items-center overflow-hidden"
+              style={font}
+            >
+              <span className="flex-1 text-left">{dateStart}</span>
+              <span className="w-px h-6 bg-white/30 mx-2" />
+              <span className="flex-1 text-left">{dateEnd}</span>
+            </button>
+          </div>
+          <div className="flex flex-col">
+            <div className="mb-1">&nbsp;</div>
+            <button
+              type="button"
+              onClick={() => router.push("/booking/my-bookings")}
+              className="w-full rounded-lg border border-white/90 bg-white/5 backdrop-blur-sm px-3 py-3 text-white text-xs hover:bg-white/10"
+              style={font}
+            >
+              Book Now
+            </button>
+            <div className="flex items-center justify-end gap-1 mt-1">
+              <Image
+                src="/images/c.png"
+                alt="best price icon"
+                width={14}
+                height={14}
+              />
+              <span className="text-[10px] text-red-600 underline" style={font}>
+                best price guaranteed
+              </span>
             </div>
           </div>
         </div>
-      )}
-    </div>
-  </div>
 
-  {/* Row 2: Combined Dates + Book */}
-  <div className="grid grid-cols-3 gap-4 mt-5">
-    <div className="col-span-2">
-      <div className="text-[11px] text-white/70 mb-1" style={font}>
-        Check-in Date&nbsp;&nbsp;&nbsp;Check-out Date
-      </div>
-      <button
-        onClick={openDateModal}
-        className="w-full rounded-lg border border-white/90 bg-white/5 backdrop-blur-sm px-3 py-3 text-white text-xs hover:bg-white/10 flex items-center overflow-hidden"
-        style={font}
-      >
-        <span className="flex-1 text-left">{dateStart}</span>
-        <span className="w-px h-6 bg-white/30 mx-2" />
-        <span className="flex-1 text-left">{dateEnd}</span>
-      </button>
-    </div>
-    <div className="flex flex-col">
-      <div className="mb-1">&nbsp;</div>
-      <button
-        type="button"
-        onClick={() => router.push("/booking/my-bookings")}
-        className="w-full rounded-lg border border-white/90 bg-white/5 backdrop-blur-sm px-3 py-3 text-white text-xs hover:bg-white/10"
-        style={font}
-      >
-        Book Now
-      </button>
-      <div className="flex items-center justify-end gap-1 mt-1">
-        <Image src="/images/c.png" alt="best price icon" width={14} height={14} />
-        <span className="text-[10px] text-red-600 underline" style={font}>best price guaranteed</span>
-      </div>
-    </div>
-  </div>
+        <div
+          className="mt-5 text-center text-[11px] text-white/80"
+          style={font}
+        >
+          Flexible with your dates?
+        </div>
+        <hr className="mt-4 border-t border-white/90" />
 
-  <div className="mt-5 text-center text-[11px] text-white/80" style={font}>Flexible with your dates?</div>
-  <hr className="mt-4 border-t border-white/90" />
+        {/* Featured Offers (stacked) */}
+        <h2 className="text-center mt-8 mb-6 text-2xl text-white" style={font}>
+          Featured Offers
+        </h2>
+        <div className="flex flex-col gap-8">
+          <div className="rounded-2xl border border-white/90 bg-white/5 backdrop-blur-sm hover:bg-white/10 p-4">
+            <div className="relative w-full h-52 rounded-xl overflow-hidden">
+              <Image
+                src="/images/img1.png"
+                alt="Beachfront Serenity"
+                fill
+                className="object-cover"
+              />
+            </div>
+            <div className="text-center mt-4 text-white text-sm" style={font}>
+              Beachfront Serenity
+            </div>
+          </div>
 
-  {/* Featured Offers (stacked) */}
-  <h2 className="text-center mt-8 mb-6 text-2xl text-white" style={font}>Featured Offers</h2>
-  <div className="flex flex-col gap-8">
-    <div className="rounded-2xl border border-white/90 bg-white/5 backdrop-blur-sm hover:bg-white/10 p-4">
-      <div className="relative w-full h-52 rounded-xl overflow-hidden">
-        <Image src="/images/img1.png" alt="Beachfront Serenity" fill className="object-cover" />
-      </div>
-      <div className="text-center mt-4 text-white text-sm" style={font}>Beachfront Serenity</div>
-    </div>
+          <div className="rounded-2xl border border-white/90 bg-white/5 backdrop-blur-sm hover:bg-white/10 p-4">
+            <div className="relative w-full h-52 rounded-xl overflow-hidden">
+              <Image
+                src="/images/img2.png"
+                alt="Complimentary Cocktails"
+                fill
+                className="object-cover"
+              />
+            </div>
+            <div className="text-center mt-4 text-white text-sm" style={font}>
+              Complimentary Cocktails
+            </div>
+          </div>
 
-    <div className="rounded-2xl border border-white/90 bg-white/5 backdrop-blur-sm hover:bg-white/10 p-4">
-      <div className="relative w-full h-52 rounded-xl overflow-hidden">
-        <Image src="/images/img2.png" alt="Complimentary Cocktails" fill className="object-cover" />
+          <div className="rounded-2xl border border-white/90 bg-white/5 backdrop-blur-sm hover:bg-white/10 p-4">
+            <div className="relative w-full h-52 rounded-xl overflow-hidden">
+              <Image
+                src="/images/img3.png"
+                alt="Gourmet Dining Package"
+                fill
+                className="object-cover"
+              />
+            </div>
+            <div className="text-center mt-4 text-white text-sm" style={font}>
+              Gourmet Dining Package
+            </div>
+          </div>
+        </div>
       </div>
-      <div className="text-center mt-4 text-white text-sm" style={font}>Complimentary Cocktails</div>
-    </div>
-
-    <div className="rounded-2xl border border-white/90 bg-white/5 backdrop-blur-sm hover:bg-white/10 p-4">
-      <div className="relative w-full h-52 rounded-xl overflow-hidden">
-        <Image src="/images/img3.png" alt="Gourmet Dining Package" fill className="object-cover" />
-      </div>
-      <div className="text-center mt-4 text-white text-sm" style={font}>Gourmet Dining Package</div>
-    </div>
-  </div>
-</div>
     </div>
   );
 }

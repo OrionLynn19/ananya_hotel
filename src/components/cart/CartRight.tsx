@@ -49,7 +49,12 @@ export default function CartRight({
         <button
           type="button"
           onClick={() => router.push(continueHref)}
-          className="mt-4 mx-auto block w-[139px] bg-[#463214]/25  text-white px-6 py-3 rounded-[20px] text-center cursor-pointer"
+          disabled={summary.totalCost === 0}
+          className={`mt-4 mx-auto block w-[139px] bg-[#463214]/25  text-white px-6 py-3 rounded-[20px] text-center ${
+            summary.totalCost === 0
+              ? "opacity-50 cursor-not-allowed"
+              : "cursor-pointer"
+          }`}
           style={{
             boxShadow:
               "inset 0 1px 0 rgba(255,255,255,1), inset 0 -1px 0 rgba(255,255,255,1)",

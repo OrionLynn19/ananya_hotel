@@ -1,25 +1,28 @@
-import { supabase } from './supabase';
-import { 
-  Room, 
-  Amenity, 
+import { supabase } from "./supabase";
+import {
+  Room,
+  Amenity,
   RoomWithAmenities,
   RoomFilters,
-  Booking, 
-  BookingWithDetails, 
+  Booking,
+  BookingWithDetails,
   BookingRequest,
   Coupon,
-  CartItem
-} from '@/types/db';
-import type { RoomWithPackages } from '@/types/db';
+  CartItem,
+} from "@/types/db";
+import type { RoomWithPackages } from "@/types/db";
 
 // ============================================
 // ROOM FUNCTIONS
 // ============================================
 
-export async function getAllRooms(filters?: RoomFilters): Promise<RoomWithAmenities[]> {
+export async function getAllRooms(
+  filters?: RoomFilters
+): Promise<RoomWithAmenities[]> {
   let query = supabase
-    .from('rooms')
-    .select(`
+    .from("rooms")
+    .select(
+      `
       *,
       room_amenities (
         amenity_id,
@@ -28,40 +31,44 @@ export async function getAllRooms(filters?: RoomFilters): Promise<RoomWithAmenit
           name
         )
       )
-    `)
-    .eq('available', true);
+    `
+    )
+    .eq("available", true);
 
   // Apply filters
   if (filters?.destination) {
-    query = query.eq('destination', filters.destination);
+    query = query.eq("destination", filters.destination);
   }
-  
+
   if (filters?.category) {
-    query = query.eq('category', filters.category);
+    query = query.eq("category", filters.category);
   }
-  
+
   if (filters?.minPrice) {
-    query = query.gte('price', filters.minPrice);
+    query = query.gte("price", filters.minPrice);
   }
-  
+
   if (filters?.maxPrice) {
-    query = query.lte('price', filters.maxPrice);
+    query = query.lte("price", filters.maxPrice);
   }
 
   const { data: rooms, error } = await query;
 
   if (error) throw error;
 
-  return rooms?.map(room => ({
-    ...room,
-    amenities: room.room_amenities?.map((ra: any) => ra.amenities) || []
-  })) || [];
+  return (
+    rooms?.map((room) => ({
+      ...room,
+      amenities: room.room_amenities?.map((ra: any) => ra.amenities) || [],
+    })) || []
+  );
 }
 
 export async function getAllRoomsWithPackages(): Promise<RoomWithPackages[]> {
   const { data: rooms, error } = await supabase
-    .from('rooms')
-    .select(`
+    .from("rooms")
+    .select(
+      `
       *,
       room_amenities (
         amenity_id,
@@ -80,30 +87,40 @@ export async function getAllRoomsWithPackages(): Promise<RoomWithPackages[]> {
         benefits,
         is_member_only
       )
-    `)
-    .eq('available', true);
+    `
+    )
+    .eq("available", true);
 
   if (error) throw error;
 
-  return rooms?.map(room => ({
-    ...room,
-    amenities: room.room_amenities?.map((ra: any) => ra.amenities) || [],
-    packages: room.packages || []
-  })) || [];
+  return (
+    rooms?.map((room) => ({
+      ...room,
+      amenities: room.room_amenities?.map((ra: any) => ra.amenities) || [],
+      packages: room.packages || [],
+    })) || []
+  );
 }
 
-export async function getRoomsByDestination(destination: string): Promise<RoomWithAmenities[]> {
+export async function getRoomsByDestination(
+  destination: string
+): Promise<RoomWithAmenities[]> {
   return getAllRooms({ destination });
 }
 
-export async function getRoomsByCategory(category: string): Promise<RoomWithAmenities[]> {
+export async function getRoomsByCategory(
+  category: string
+): Promise<RoomWithAmenities[]> {
   return getAllRooms({ category });
 }
 
-export async function getRoomById(id: number): Promise<RoomWithAmenities | null> {
+export async function getRoomById(
+  id: number
+): Promise<RoomWithAmenities | null> {
   const { data: room, error } = await supabase
-    .from('rooms')
-    .select(`
+    .from("rooms")
+    .select(
+      `
       *,
       room_amenities (
         amenity_id,
@@ -112,8 +129,9 @@ export async function getRoomById(id: number): Promise<RoomWithAmenities | null>
           name
         )
       )
-    `)
-    .eq('id', id)
+    `
+    )
+    .eq("id", id)
     .single();
 
   if (error) throw error;
@@ -121,14 +139,17 @@ export async function getRoomById(id: number): Promise<RoomWithAmenities | null>
 
   return {
     ...room,
-    amenities: room.room_amenities?.map((ra: any) => ra.amenities) || []
+    amenities: room.room_amenities?.map((ra: any) => ra.amenities) || [],
   };
 }
 
-export async function getRoomWithPackages(id: number): Promise<RoomWithPackages | null> {
+export async function getRoomWithPackages(
+  id: number
+): Promise<RoomWithPackages | null> {
   const { data: room, error } = await supabase
-    .from('rooms')
-    .select(`
+    .from("rooms")
+    .select(
+      `
       *,
       room_amenities (
         amenity_id,
@@ -147,8 +168,9 @@ export async function getRoomWithPackages(id: number): Promise<RoomWithPackages 
         benefits,
         is_member_only
       )
-    `)
-    .eq('id', id)
+    `
+    )
+    .eq("id", id)
     .single();
 
   if (error) throw error;
@@ -157,39 +179,41 @@ export async function getRoomWithPackages(id: number): Promise<RoomWithPackages 
   return {
     ...room,
     amenities: room.room_amenities?.map((ra: any) => ra.amenities) || [],
-    packages: room.packages || []
+    packages: room.packages || [],
   };
 }
 
 export async function getDestinations(): Promise<string[]> {
   const { data, error } = await supabase
-    .from('rooms')
-    .select('destination')
-    .eq('available', true);
+    .from("rooms")
+    .select("destination")
+    .eq("available", true);
 
   if (error) throw error;
-  
+
   // Get unique destinations
-  const destinations = [...new Set(data?.map(r => r.destination))];
+  const destinations = [...new Set(data?.map((r) => r.destination))];
   return destinations.filter(Boolean) as string[];
 }
 
 export async function getCategories(): Promise<string[]> {
   const { data, error } = await supabase
-    .from('rooms')
-    .select('category')
-    .eq('available', true);
+    .from("rooms")
+    .select("category")
+    .eq("available", true);
 
   if (error) throw error;
-  
+
   // Get unique categories
-  const categories = [...new Set(data?.map(r => r.category))];
+  const categories = [...new Set(data?.map((r) => r.category))];
   return categories.filter(Boolean) as string[];
 }
 
-export async function createRoom(room: Omit<Room, 'id' | 'created_at'>): Promise<Room> {
+export async function createRoom(
+  room: Omit<Room, "id" | "created_at">
+): Promise<Room> {
   const { data, error } = await supabase
-    .from('rooms')
+    .from("rooms")
     .insert(room)
     .select()
     .single();
@@ -198,11 +222,14 @@ export async function createRoom(room: Omit<Room, 'id' | 'created_at'>): Promise
   return data;
 }
 
-export async function updateRoom(id: number, updates: Partial<Room>): Promise<Room> {
+export async function updateRoom(
+  id: number,
+  updates: Partial<Room>
+): Promise<Room> {
   const { data, error } = await supabase
-    .from('rooms')
+    .from("rooms")
     .update(updates)
-    .eq('id', id)
+    .eq("id", id)
     .select()
     .single();
 
@@ -211,38 +238,41 @@ export async function updateRoom(id: number, updates: Partial<Room>): Promise<Ro
 }
 
 export async function deleteRoom(id: number): Promise<void> {
-  const { error } = await supabase
-    .from('rooms')
-    .delete()
-    .eq('id', id);
+  const { error } = await supabase.from("rooms").delete().eq("id", id);
 
   if (error) throw error;
 }
 
 export async function getAllAmenities(): Promise<Amenity[]> {
   const { data, error } = await supabase
-    .from('amenities')
-    .select('*')
-    .order('name');
+    .from("amenities")
+    .select("*")
+    .order("name");
 
   if (error) throw error;
   return data || [];
 }
 
-export async function addAmenityToRoom(roomId: number, amenityId: number): Promise<void> {
+export async function addAmenityToRoom(
+  roomId: number,
+  amenityId: number
+): Promise<void> {
   const { error } = await supabase
-    .from('room_amenities')
+    .from("room_amenities")
     .insert({ room_id: roomId, amenity_id: amenityId });
 
   if (error) throw error;
 }
 
-export async function removeAmenityFromRoom(roomId: number, amenityId: number): Promise<void> {
+export async function removeAmenityFromRoom(
+  roomId: number,
+  amenityId: number
+): Promise<void> {
   const { error } = await supabase
-    .from('room_amenities')
+    .from("room_amenities")
     .delete()
-    .eq('room_id', roomId)
-    .eq('amenity_id', amenityId);
+    .eq("room_id", roomId)
+    .eq("amenity_id", amenityId);
 
   if (error) throw error;
 }
@@ -257,10 +287,10 @@ export async function checkRoomAvailability(
   checkOut: string
 ): Promise<boolean> {
   const { data, error } = await supabase
-    .from('bookings')
-    .select('id')
-    .eq('room_id', roomId)
-    .neq('status', 'cancelled')
+    .from("bookings")
+    .select("id")
+    .eq("room_id", roomId)
+    .neq("status", "cancelled")
     .or(`and(check_in.lte.${checkOut},check_out.gte.${checkIn})`);
 
   if (error) throw error;
@@ -273,51 +303,53 @@ export async function checkRoomCapacity(
   children: number
 ): Promise<{ isValid: boolean; message?: string }> {
   const room = await getRoomById(roomId);
-  
+
   if (!room) {
-    return { isValid: false, message: 'Room not found' };
+    return { isValid: false, message: "Room not found" };
   }
-  
+
   const totalGuests = adults + children;
-  
+
   if (totalGuests > room.capacity) {
-    return { 
-      isValid: false, 
-      message: `Room capacity is ${room.capacity} guests. You selected ${totalGuests} guests.` 
+    return {
+      isValid: false,
+      message: `Room capacity is ${room.capacity} guests. You selected ${totalGuests} guests.`,
     };
   }
-  
+
   return { isValid: true };
 }
 
 export function calculateNights(checkIn: string, checkOut: string): number {
   const start = new Date(checkIn);
   const end = new Date(checkOut);
-  const nights = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+  const nights = Math.ceil(
+    (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
+  );
   return Math.max(nights, 1);
 }
 
 export async function validateCoupon(code: string): Promise<Coupon | null> {
   const { data, error } = await supabase
-    .from('coupons')
-    .select('*')
-    .eq('code', code.toUpperCase())
-    .eq('active', true)
+    .from("coupons")
+    .select("*")
+    .eq("code", code.toUpperCase())
+    .eq("active", true)
     .single();
 
   if (error) return null;
   if (!data) return null;
 
   const now = new Date();
-  
+
   if (data.valid_from && new Date(data.valid_from) > now) {
     return null;
   }
-  
+
   if (data.valid_until && new Date(data.valid_until) < now) {
     return null;
   }
-  
+
   if (data.max_uses && data.current_uses >= data.max_uses) {
     return null;
   }
@@ -326,8 +358,8 @@ export async function validateCoupon(code: string): Promise<Coupon | null> {
 }
 
 export function calculateDiscount(subtotal: number, coupon: Coupon): number {
-  if (coupon.discount_type === 'percentage') {
-    return Math.round((subtotal * (coupon.discount_value / 100)) * 100) / 100;
+  if (coupon.discount_type === "percentage") {
+    return Math.round(subtotal * (coupon.discount_value / 100) * 100) / 100;
   }
   return Math.min(coupon.discount_value, subtotal);
 }
@@ -336,10 +368,12 @@ export function calculateDiscount(subtotal: number, coupon: Coupon): number {
 // BOOKING CRUD FUNCTIONS
 // ============================================
 
-export async function createBooking(bookingData: BookingRequest): Promise<BookingWithDetails> {
+export async function createBooking(
+  bookingData: BookingRequest
+): Promise<BookingWithDetails> {
   // 1. Validate adults
   if (bookingData.adults < 1) {
-    throw new Error('At least 1 adult is required');
+    throw new Error("At least 1 adult is required");
   }
 
   // 2. Check room capacity
@@ -350,7 +384,7 @@ export async function createBooking(bookingData: BookingRequest): Promise<Bookin
   );
 
   if (!capacityCheck.isValid) {
-    throw new Error(capacityCheck.message || 'Room capacity exceeded');
+    throw new Error(capacityCheck.message || "Room capacity exceeded");
   }
 
   // 3. Check room availability
@@ -361,19 +395,22 @@ export async function createBooking(bookingData: BookingRequest): Promise<Bookin
   );
 
   if (!isAvailable) {
-    throw new Error('Room is not available for the selected dates');
+    throw new Error("Room is not available for the selected dates");
   }
 
   // 4. Get room details with amenities
   const room = await getRoomById(bookingData.room_id);
   if (!room) {
-    throw new Error('Room not found');
+    throw new Error("Room not found");
   }
 
   // 5. Calculate pricing
-  const totalNights = calculateNights(bookingData.check_in, bookingData.check_out);
+  const totalNights = calculateNights(
+    bookingData.check_in,
+    bookingData.check_out
+  );
   const subtotal = room.price * totalNights;
-  
+
   let discountAmount = 0;
   let coupon: Coupon | null = null;
 
@@ -383,7 +420,7 @@ export async function createBooking(bookingData: BookingRequest): Promise<Bookin
     if (coupon) {
       discountAmount = calculateDiscount(subtotal, coupon);
     } else {
-      throw new Error('Invalid or expired coupon code');
+      throw new Error("Invalid or expired coupon code");
     }
   }
 
@@ -391,7 +428,7 @@ export async function createBooking(bookingData: BookingRequest): Promise<Bookin
 
   // 7. Create booking
   const { data: booking, error: bookingError } = await supabase
-    .from('bookings')
+    .from("bookings")
     .insert({
       room_id: bookingData.room_id,
       prefix: bookingData.prefix,
@@ -412,7 +449,7 @@ export async function createBooking(bookingData: BookingRequest): Promise<Bookin
       coupon_code: bookingData.coupon_code?.toUpperCase(),
       discount_amount: discountAmount,
       total_price: totalPrice,
-      status: 'pending'
+      status: "pending",
     })
     .select()
     .single();
@@ -421,36 +458,37 @@ export async function createBooking(bookingData: BookingRequest): Promise<Bookin
 
   // 8. Store amenities snapshot
   if (room.amenities.length > 0) {
-    const amenityInserts = room.amenities.map(amenity => ({
+    const amenityInserts = room.amenities.map((amenity) => ({
       booking_id: booking.id,
-      amenity_name: amenity.name
+      amenity_name: amenity.name,
     }));
 
-    await supabase
-      .from('booking_amenities')
-      .insert(amenityInserts);
+    await supabase.from("booking_amenities").insert(amenityInserts);
   }
 
   // 9. Update coupon usage
   if (coupon) {
     await supabase
-      .from('coupons')
+      .from("coupons")
       .update({ current_uses: coupon.current_uses + 1 })
-      .eq('id', coupon.id);
+      .eq("id", coupon.id);
   }
 
   // 10. Return complete booking with room details
   return {
     ...booking,
     room: room,
-    amenities: room.amenities.map(a => a.name)
+    amenities: room.amenities.map((a) => a.name),
   };
 }
 
-export async function getBookingById(id: number): Promise<BookingWithDetails | null> {
+export async function getBookingById(
+  id: number
+): Promise<BookingWithDetails | null> {
   const { data: booking, error } = await supabase
-    .from('bookings')
-    .select(`
+    .from("bookings")
+    .select(
+      `
       *,
       rooms (
         *,
@@ -464,8 +502,9 @@ export async function getBookingById(id: number): Promise<BookingWithDetails | n
       booking_amenities (
         amenity_name
       )
-    `)
-    .eq('id', id)
+    `
+    )
+    .eq("id", id)
     .single();
 
   if (error) throw error;
@@ -475,16 +514,21 @@ export async function getBookingById(id: number): Promise<BookingWithDetails | n
     ...booking,
     room: {
       ...booking.rooms,
-      amenities: booking.rooms.room_amenities?.map((ra: any) => ra.amenities) || []
+      amenities:
+        booking.rooms.room_amenities?.map((ra: any) => ra.amenities) || [],
     },
-    amenities: booking.booking_amenities?.map((ba: any) => ba.amenity_name) || []
+    amenities:
+      booking.booking_amenities?.map((ba: any) => ba.amenity_name) || [],
   };
 }
 
-export async function getUserBookings(email: string): Promise<BookingWithDetails[]> {
+export async function getUserBookings(
+  email: string
+): Promise<BookingWithDetails[]> {
   const { data: bookings, error } = await supabase
-    .from('bookings')
-    .select(`
+    .from("bookings")
+    .select(
+      `
       *,
       rooms (
         *,
@@ -498,26 +542,32 @@ export async function getUserBookings(email: string): Promise<BookingWithDetails
       booking_amenities (
         amenity_name
       )
-    `)
-    .eq('email', email)
-    .order('created_at', { ascending: false });
+    `
+    )
+    .eq("email", email)
+    .order("created_at", { ascending: false });
 
   if (error) throw error;
 
-  return bookings?.map(booking => ({
-    ...booking,
-    room: {
-      ...booking.rooms,
-      amenities: booking.rooms.room_amenities?.map((ra: any) => ra.amenities) || []
-    },
-    amenities: booking.booking_amenities?.map((ba: any) => ba.amenity_name) || []
-  })) || [];
+  return (
+    bookings?.map((booking) => ({
+      ...booking,
+      room: {
+        ...booking.rooms,
+        amenities:
+          booking.rooms.room_amenities?.map((ra: any) => ra.amenities) || [],
+      },
+      amenities:
+        booking.booking_amenities?.map((ba: any) => ba.amenity_name) || [],
+    })) || []
+  );
 }
 
 export async function getAllBookings(): Promise<BookingWithDetails[]> {
   const { data: bookings, error } = await supabase
-    .from('bookings')
-    .select(`
+    .from("bookings")
+    .select(
+      `
       *,
       rooms (
         *,
@@ -531,29 +581,34 @@ export async function getAllBookings(): Promise<BookingWithDetails[]> {
       booking_amenities (
         amenity_name
       )
-    `)
-    .order('created_at', { ascending: false });
+    `
+    )
+    .order("created_at", { ascending: false });
 
   if (error) throw error;
 
-  return bookings?.map(booking => ({
-    ...booking,
-    room: {
-      ...booking.rooms,
-      amenities: booking.rooms.room_amenities?.map((ra: any) => ra.amenities) || []
-    },
-    amenities: booking.booking_amenities?.map((ba: any) => ba.amenity_name) || []
-  })) || [];
+  return (
+    bookings?.map((booking) => ({
+      ...booking,
+      room: {
+        ...booking.rooms,
+        amenities:
+          booking.rooms.room_amenities?.map((ra: any) => ra.amenities) || [],
+      },
+      amenities:
+        booking.booking_amenities?.map((ba: any) => ba.amenity_name) || [],
+    })) || []
+  );
 }
 
 export async function updateBookingStatus(
   id: number,
-  status: Booking['status']
+  status: Booking["status"]
 ): Promise<Booking> {
   const { data, error } = await supabase
-    .from('bookings')
+    .from("bookings")
     .update({ status })
-    .eq('id', id)
+    .eq("id", id)
     .select()
     .single();
 
@@ -562,7 +617,7 @@ export async function updateBookingStatus(
 }
 
 export async function cancelBooking(id: number): Promise<Booking> {
-  return updateBookingStatus(id, 'cancelled');
+  return updateBookingStatus(id, "cancelled");
 }
 
 // ============================================
@@ -579,24 +634,24 @@ export async function addToCart(
 ): Promise<CartItem> {
   // Validate
   if (adults < 1) {
-    throw new Error('At least 1 adult is required');
+    throw new Error("At least 1 adult is required");
   }
 
   // Check capacity
   const capacityCheck = await checkRoomCapacity(roomId, adults, children);
   if (!capacityCheck.isValid) {
-    throw new Error(capacityCheck.message || 'Room capacity exceeded');
+    throw new Error(capacityCheck.message || "Room capacity exceeded");
   }
 
   // Get room price
   const room = await getRoomById(roomId);
-  if (!room) throw new Error('Room not found');
+  if (!room) throw new Error("Room not found");
 
   const totalNights = calculateNights(checkIn, checkOut);
   const price = room.price * totalNights;
 
   const { data, error } = await supabase
-    .from('cart_items')
+    .from("cart_items")
     .insert({
       session_id: sessionId,
       room_id: roomId,
@@ -604,7 +659,7 @@ export async function addToCart(
       check_out: checkOut,
       adults,
       children,
-      price
+      price,
     })
     .select()
     .single();
@@ -615,35 +670,38 @@ export async function addToCart(
 
 export async function getCartItems(sessionId: string): Promise<CartItem[]> {
   const { data, error } = await supabase
-    .from('cart_items')
-    .select(`
+    .from("cart_items")
+    .select(
+      `
       *,
       rooms (
+        id,
         name,
         image_url,
-        capacity
+        capacity,
+        bed_types,
+        destination,
+        price
       )
-    `)
-    .eq('session_id', sessionId);
+    `
+    )
+    .eq("session_id", sessionId);
 
   if (error) throw error;
   return data || [];
 }
 
 export async function removeFromCart(id: number): Promise<void> {
-  const { error } = await supabase
-    .from('cart_items')
-    .delete()
-    .eq('id', id);
+  const { error } = await supabase.from("cart_items").delete().eq("id", id);
 
   if (error) throw error;
 }
 
 export async function clearCart(sessionId: string): Promise<void> {
   const { error } = await supabase
-    .from('cart_items')
+    .from("cart_items")
     .delete()
-    .eq('session_id', sessionId);
+    .eq("session_id", sessionId);
 
   if (error) throw error;
 }
@@ -652,19 +710,22 @@ export async function clearCart(sessionId: string): Promise<void> {
 // COUPON FUNCTIONS
 // ============================================
 
-export async function applyCoupon(code: string, subtotal: number): Promise<{
+export async function applyCoupon(
+  code: string,
+  subtotal: number
+): Promise<{
   isValid: boolean;
   discount: number;
   coupon?: Coupon;
   message?: string;
 }> {
   const coupon = await validateCoupon(code);
-  
+
   if (!coupon) {
     return {
       isValid: false,
       discount: 0,
-      message: 'Invalid or expired coupon code'
+      message: "Invalid or expired coupon code",
     };
   }
 
@@ -674,6 +735,6 @@ export async function applyCoupon(code: string, subtotal: number): Promise<{
     isValid: true,
     discount,
     coupon,
-    message: `Coupon applied! You saved $${discount.toFixed(2)}`
+    message: `Coupon applied! You saved $${discount.toFixed(2)}`,
   };
 }

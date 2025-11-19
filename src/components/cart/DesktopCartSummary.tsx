@@ -109,27 +109,52 @@ export default function DesktopCartSummary({
                 {isEditing && (
                   <button
                     aria-label={`Remove ${item.title}`}
-                    onClick={() => {
-                      const remaining = localItems.filter(
-                        (i) => i.id !== item.id
-                      );
-                      setLocalItems(remaining);
-                      const totalGuests = remaining.reduce(
-                        (acc, it) => acc + (it.persons || 0),
-                        0
-                      );
-                      const totalCost = remaining.reduce((acc, it) => {
-                        const room = it.pricePerNight * (it.nights || 1);
-                        const extra = it.extraBed ? 800 * (it.nights || 1) : 0;
-                        return acc + room + extra;
-                      }, 0);
-                      const newSummary = {
-                        totalGuests: `${totalGuests} Adults`,
-                        totalCost,
-                      };
-                      if (typeof onChange === "function")
-                        onChange(remaining, newSummary);
-                      if (remaining.length === 0) setIsEditing(false);
+                    onClick={async () => {
+                      try {
+                        const res = await fetch(`/api/cart?id=${item.id}`, {
+                          method: "DELETE",
+                        });
+
+                        if (!res.ok) {
+                          const err = await res.json().catch(() => ({}));
+                          console.error("Failed to remove item:", err);
+                          alert(err?.error || "Failed to remove item");
+                          return;
+                        }
+
+                        const remaining = localItems.filter(
+                          (i) => i.id !== item.id
+                        );
+                        setLocalItems(remaining);
+                        const totalGuests = remaining.reduce(
+                          (acc, it) => acc + (it.persons || 0),
+                          0
+                        );
+                        const totalCost = remaining.reduce((acc, it) => {
+                          const room = it.pricePerNight * (it.nights || 1);
+                          const extra = it.extraBed
+                            ? 800 * (it.nights || 1)
+                            : 0;
+                          return acc + room + extra;
+                        }, 0);
+                        const newSummary = {
+                          totalGuests: `${totalGuests} Adults`,
+                          totalCost,
+                        };
+                        if (typeof onChange === "function")
+                          onChange(remaining, newSummary);
+                        if (remaining.length === 0) setIsEditing(false);
+                        try {
+                          window.dispatchEvent(new CustomEvent("cart-updated"));
+                        } catch {
+                          const ev = document.createEvent("Event");
+                          ev.initEvent("cart-updated", true, true);
+                          window.dispatchEvent(ev);
+                        }
+                      } catch (error) {
+                        console.error("Error removing item", error);
+                        alert("Error removing item");
+                      }
                     }}
                     className="absolute -top-7 -right-3 p-1 w-8 h-8 flex items-center justify-center cursor-pointer"
                   >
@@ -227,7 +252,12 @@ export default function DesktopCartSummary({
           ) : (
             <button
               onClick={() => setShowModal(true)}
-              className="w-40 text-[18px] font-montserrat font-[500px] bg-[#463214]/25 text-white px-6 py-3 rounded-[20px] text-center cursor-pointer"
+              disabled={localItems.length === 0}
+              className={`w-40 text-[18px] font-montserrat font-[500px] bg-[#463214]/25 text-white px-6 py-3 rounded-[20px] text-center ${
+                localItems.length === 0
+                  ? "opacity-50 cursor-not-allowed"
+                  : "cursor-pointer"
+              }`}
               style={{
                 boxShadow:
                   "inset 0 1px 0 rgba(255,255,255,1), inset 0 -1px 0 rgba(255,255,255,1)",

@@ -117,7 +117,7 @@ export default function BookingModalClean({ open, onClose }: Props) {
                       type="button"
                       onClick={() => {
                         onClose();
-                        router.push("/booking/signin");
+                        router.push("/booking/sign-up");
                       }}
                       className="text-[#B4B4B4]"
                     >
@@ -212,7 +212,7 @@ export default function BookingModalClean({ open, onClose }: Props) {
                       type="button"
                       onClick={() => {
                         onClose();
-                        router.push("/booking/signin");
+                        router.push("/booking/sign-up");
                       }}
                       className="text-[#B4B4B4]"
                     >
