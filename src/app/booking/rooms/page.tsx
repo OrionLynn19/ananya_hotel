@@ -1,8 +1,12 @@
 "use client";
 
+
+import { Suspense } from "react";
+import Roomsbar from "../../components/Roomsbar";
+import BookingRoomCard from "../../components/BookingRoomCard";
 import React, { useEffect, useState } from "react";
 import DesktopCartSummary from "../../../components/cart/DesktopCartSummary";
-
+  
 type CartItem = {
   id: string;
   title: string;
@@ -19,7 +23,7 @@ type CartItem = {
 };
 
 export default function RoomsPage() {
-  const [data, setData] = useState<{
+   const [data, setData] = useState<{
     items: CartItem[];
     summary: { totalGuests: string; totalCost: number };
   } | null>(null);
@@ -38,9 +42,8 @@ export default function RoomsPage() {
   }, []);
 
   if (!data) return <div className="p-8">Loading…</div>;
-
   return (
-    <div className="w-full max-w-[1326px] mx-auto px-4 py-16 md:flex md:gap-6">
+     <div className="w-full max-w-[1326px] mx-auto px-4 py-16 md:flex md:gap-6">
       <main className="flex-1"></main>
 
       <DesktopCartSummary
@@ -51,5 +54,16 @@ export default function RoomsPage() {
         }
       />
     </div>
+    <main className="w-full">
+      <div className="pt-8 px-8">
+        <Suspense fallback={<div>Loading search bar...</div>}>
+          <Roomsbar />
+        </Suspense>
+        <Suspense fallback={<div>Loading rooms...</div>}>
+          <BookingRoomCard />
+        </Suspense>
+      </div>
+    </main>
+
   );
 }

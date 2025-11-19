@@ -140,7 +140,11 @@ export default function Navbar() {
 
               <div className="h-6 w-px bg-[#4a3a2b]/60" aria-hidden />
 
-              <Link href="/contact" className="px-4" style={navTextStyle}>
+              <Link
+                href="/faqandcontactus"
+                className="px-4"
+                style={navTextStyle}
+              >
                 Contact us
               </Link>
             </nav>
@@ -272,7 +276,7 @@ export default function Navbar() {
           top: isFixed ? 0 : undefined,
           left: isFixed ? 0 : undefined,
           right: isFixed ? 0 : undefined,
-          zIndex: 50
+          zIndex: 50,
         }}
       >
         <div style={{ position: "relative", left: "-3px" }}>
@@ -544,7 +548,7 @@ export default function Navbar() {
               </Link>
 
               <Link
-                href="/contact"
+                href="/faqandcontactus"
                 onClick={() => setMobileOpen(false)}
                 style={{
                   ...navTextStyle,
@@ -651,7 +655,10 @@ export default function Navbar() {
                     marginTop: 6,
                   }}
                 >
-                  Our Services
+                  <Link href="/ourservice" onClick={() => setMobileOpen(false)}>
+                    Our Services
+                  </Link>
+                  
                 </div>
                 <ul style={{ marginTop: 8, paddingLeft: 18, color: "#2f2218" }}>
                   <li

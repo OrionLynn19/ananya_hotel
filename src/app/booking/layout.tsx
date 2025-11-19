@@ -26,7 +26,7 @@ export default function BookingLayout({
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-screen text-white">
+    <div className="min-h-screen text-white overflow-x-hidden">
       <div className="relative min-h-screen">
         {/* 🔹 BACKGROUND IMAGE */}
         <div className="absolute inset-0 -z-10">
@@ -54,7 +54,7 @@ export default function BookingLayout({
               <div className="flex flex-1 justify-center">
                 <div className="flex flex-col items-center leading-tight">
                   <Image
-                    src="/Images/Vector.png"
+                    src="/Images/logobooking.png"
                     alt="ANANYA logo"
                     width={42}
                     height={42}
@@ -89,7 +89,7 @@ export default function BookingLayout({
               {/* Logo */}
               <div className="flex flex-col items-center leading-tight">
                 <Image
-                  src="/Images/Vector.png"
+                  src="/Images/logobooking.png"
                   alt="ANANYA logo"
                   width={60}
                   height={60}
@@ -101,7 +101,7 @@ export default function BookingLayout({
               </div>
 
               {/* NAVIGATION MENU (desktop) */}
-              <nav className="ml-43 flex items-center gap-8 text-sm font-medium">
+              <nav className="flex items-center gap-8 text-sm font-medium">
                 <Link
                   href="/"
                   className="rounded-full px-4 py-2 text-xl transition-all hover:border hover:border-white/60 hover:bg-white/10"

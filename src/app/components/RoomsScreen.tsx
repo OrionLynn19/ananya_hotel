@@ -1,19 +1,70 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import DestinationPicker from "./DestinationPicker";
 import RoomTabs from "./RoomTabs";
 import RoomCard from "./RoomCard";
-import { ROOMS, ROOM_TABS, DESTINATIONS, type Room } from "../data/room.data";
+import { ROOM_TABS, DESTINATIONS } from "../data/room.data";
+import type { RoomWithAmenities } from "@/types/db";
+
+// Map database room to frontend Room type
+function mapRoomToFrontend(dbRoom: RoomWithAmenities) {
+  return {
+    id: dbRoom.id.toString(),
+    destination: dbRoom.destination,
+    category: dbRoom.category as "All" | "Suite Ocean Front Wing" | "Ocean Front Wing" | "Deluxe Room",
+    wingLabel: dbRoom.wing_label,
+    title: dbRoom.name,
+    size: dbRoom.size,
+    idealFor: dbRoom.ideal_for,
+    bedTypes: dbRoom.bed_types,
+    interconnect: dbRoom.interconnect,
+    amenities: dbRoom.amenities.map(a => a.name as "Parking" | "Wifi" | "Sea View" | "Breakfast"),
+    price: dbRoom.price,
+    image: dbRoom.image_url || "/images/placeholder.jpg",
+  };
+}
 
 export default function RoomsScreen() {
   const [activeTab, setActiveTab] = useState<string>("All");
   const [destination, setDestination] = useState<string | null>(null);
+  const [rooms, setRooms] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const filtered: Room[] = useMemo(
-    () => (activeTab === "All" ? ROOMS : ROOMS.filter((r) => r.category === activeTab)),
-    [activeTab]
-  );
+  // Fetch rooms from API
+  useEffect(() => {
+    async function fetchRooms() {
+      setLoading(true);
+      try {
+        const params = new URLSearchParams();
+        if (destination) {
+          params.append('destination', destination);
+        }
+        if (activeTab !== 'All') {
+          params.append('category', activeTab);
+        }
+
+        const response = await fetch(`/api/rooms?${params}`);
+        const data = await response.json();
+        
+        // Map database rooms to frontend format
+        const mappedRooms = data.map(mapRoomToFrontend);
+        setRooms(mappedRooms);
+      } catch (error) {
+        console.error('Error fetching rooms:', error);
+        setRooms([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchRooms();
+  }, [activeTab, destination]);
+
+  // Filter is now done by API, but keep this for any additional client-side filtering
+  const filtered = useMemo(() => {
+    return rooms;
+  }, [rooms]);
 
   const listClass =
     "mt-6 md:mt-8 flex flex-col gap-6 md:gap-8 " +
@@ -58,8 +109,13 @@ export default function RoomsScreen() {
           </div>
         </div>
 
-        {/* Rooms List */}
-        {filtered.length === 0 ? (
+        {/* Loading State */}
+        {loading ? (
+          <div className="mt-8 md:mt-10 rounded-2xl border border-[#efeadf] bg-white p-6 md:p-8 text-center">
+            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-[#3b2a16] border-r-transparent"></div>
+            <p className="mt-4 text-sm text-[#6c5845]">Loading rooms...</p>
+          </div>
+        ) : filtered.length === 0 ? (
           <div className="mt-8 md:mt-10 rounded-2xl border border-[#efeadf] bg-white p-6 md:p-8 text-center text-sm text-[#6c5845]">
             No rooms available for this filter.
           </div>
