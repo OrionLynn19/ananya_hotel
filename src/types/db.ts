@@ -26,6 +26,19 @@ export interface Amenity {
   created_at: string;
 }
 
+export interface Package {
+  id: number;
+  room_id: number;
+  name: string;
+  description: string | null;
+  original_price: number | null;
+  price: number;
+  points: number;
+  benefits: string[]; // Array of benefit strings
+  is_member_only: boolean;
+  created_at: string;
+}
+
 export interface RoomAmenity {
   room_id: number;
   amenity_id: number;
@@ -33,6 +46,10 @@ export interface RoomAmenity {
 
 export interface RoomWithAmenities extends Room {
   amenities: Amenity[];
+}
+
+export interface RoomWithPackages extends RoomWithAmenities {
+  packages: Package[];
 }
 
 // Add type for filtering

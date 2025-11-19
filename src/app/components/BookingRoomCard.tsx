@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 import { FiWifi } from "react-icons/fi";
 import {
   FaCarAlt,
@@ -11,150 +12,80 @@ import {
   FaUserFriends,
   FaBed,
 } from "react-icons/fa";
-import type { JSX } from "react";
+import type { RoomWithPackages, Package } from "@/types/db";
 
-type Package = {
-  name: string;
-  originalPrice?: string;
-  price: string;
-  points: string;
-  bullets: string[];
-};
-
-type Room = {
-  id: number;
-  name: string;
-  sizeLabel: string;
-  image: string;
-  maxOccupancy: string;
-  amenities: { icon: JSX.Element; label: string }[];
-  packages: Package[];
-};
-
-const ROOMS: Room[] = [
-  {
-    id: 1,
-    name: "Superior Comfort",
-    sizeLabel: "23–29m²",
-    image: "/images/Ocean.jpg",
-    maxOccupancy: "2 Adult & 1 Children  MAX",
-    amenities: [
-      { icon: <FiWifi />, label: "Free Wifi" },
-      { icon: <FaCarAlt />, label: "Parking Available" },
-      { icon: <FaSwimmingPool />, label: "Swimming Pool" },
-      { icon: <FaDog />, label: "Pet Friendly" },
-      { icon: <FaSmokingBan />, label: "Smoking Prohibited" },
-    ],
-    packages: [
-      {
-        name: "Tropic Wonders:",
-        originalPrice: "THB 2900",
-        price: "THB 2100",
-        points: "23450",
-        bullets: [
-          "Exclusively for Gold Members only",
-          "15% off dining & drink",
-          "Can early check-in or late check-out",
-          "Including taxes and fees",
-        ],
-      },
-      {
-        name: "Breakfast Lover:",
-        price: "THB 2900",
-        points: "23450",
-        bullets: [
-          "Include western Breakfast",
-          "15% off dining & drink",
-          "Can early check-in or late check-out",
-          "Including taxes and fees",
-        ],
-      },
-    ],
-  },
-  {
-    id: 2,
-    name: "Ocean View Deluxe",
-    sizeLabel: "30–35m²",
-    image: "/images/Deluxe Room2.jpg",
-    maxOccupancy: "2 Adult & 2 Children  MAX",
-    amenities: [
-      { icon: <FiWifi />, label: "Free Wifi" },
-      { icon: <FaSwimmingPool />, label: "Infinity Pool" },
-      { icon: <FaDog />, label: "Pet Friendly" },
-      { icon: <FaSmokingBan />, label: "Smoking Prohibited" },
-    ],
-    packages: [
-      {
-        name: "Sunrise Escape:",
-        originalPrice: "THB 3500",
-        price: "THB 2800",
-        points: "28700",
-        bullets: [
-          "Ocean-view breakfast for two",
-          "Welcome drink on arrival",
-          "Late check-out (subject to availability)",
-          "Including taxes and fees",
-        ],
-      },
-      {
-        name: "Seaside Indulgence:",
-        price: "THB 3200",
-        points: "29800",
-        bullets: [
-          "Daily cocktail at rooftop bar",
-          "20% off spa treatments",
-          "Early check-in or late check-out",
-          "Including taxes and fees",
-        ],
-      },
-    ],
-  },
-  {
-    id: 3,
-    name: "Family Suite",
-    sizeLabel: "40–48m²",
-    image: "/images/Ocean1.jpg",
-    maxOccupancy: "3 Adult & 2 Children  MAX",
-    amenities: [
-      { icon: <FiWifi />, label: "Free Wifi" },
-      { icon: <FaCarAlt />, label: "Parking Available" },
-      { icon: <FaSwimmingPool />, label: "Kids Pool" },
-      { icon: <FaDog />, label: "Pet Friendly" },
-    ],
-    packages: [
-      {
-        name: "Family Retreat:",
-        originalPrice: "THB 4200",
-        price: "THB 3900",
-        points: "31200",
-        bullets: [
-          "Daily breakfast for 4",
-          "Kids stay & eat free (under 12)",
-          "Early check-in & late check-out",
-          "Including taxes and fees",
-        ],
-      },
-      {
-        name: "Play & Stay:",
-        price: "THB 4400",
-        points: "33600",
-        bullets: [
-          "Kids club access for 2 children",
-          "One complimentary family activity",
-          "Welcome snacks for kids",
-          "Including taxes and fees",
-        ],
-      },
-    ],
-  },
-];
+// Map amenity names to icons
+function getAmenityIcon(name: string): JSX.Element {
+  const iconMap: Record<string, JSX.Element> = {
+    'Wifi': <FiWifi />,
+    'Parking': <FaCarAlt />,
+    'Pool': <FaSwimmingPool />,
+    'Pet Friendly': <FaDog />,
+    'No Smoking': <FaSmokingBan />,
+  };
+  return iconMap[name] || <FiWifi />;
+}
 
 export default function BookingRoomCard() {
+  const searchParams = useSearchParams();
+  const [rooms, setRooms] = useState<RoomWithPackages[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchRooms() {
+      try {
+        // Build API URL with search params
+        const params = new URLSearchParams();
+        
+        const destination = searchParams.get('destination');
+        const checkIn = searchParams.get('checkIn');
+        const checkOut = searchParams.get('checkOut');
+        const roomsCount = searchParams.get('rooms');
+        const adults = searchParams.get('adults');
+        const children = searchParams.get('children');
+
+        if (destination) params.set('destination', destination);
+        if (checkIn) params.set('checkIn', checkIn);
+        if (checkOut) params.set('checkOut', checkOut);
+        if (roomsCount) params.set('rooms', roomsCount);
+        if (adults) params.set('adults', adults);
+        if (children) params.set('children', children);
+
+        const response = await fetch(`/api/booking/rooms?${params}`);
+        const data = await response.json();
+        setRooms(data);
+      } catch (error) {
+        console.error('Error fetching rooms:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchRooms();
+  }, [searchParams]);
+
+  if (loading) {
+    return (
+      <section className="w-full flex justify-center px-4 md:px-8 py-10">
+        <div className="text-white">Loading rooms...</div>
+      </section>
+    );
+  }
+
+  if (rooms.length === 0) {
+    return (
+      <section className="w-full flex justify-center px-4 md:px-8 py-10">
+        <div className="text-white text-center">
+          <p className="text-lg mb-2">No rooms found</p>
+          <p className="text-sm opacity-70">Try adjusting your search criteria</p>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="w-full flex justify-start px-4 md:px-8 py-10">
-      {/* 70% on desktop, full width on mobile */}
       <div className="w-full md:w-[70%] max-h-[720px] overflow-y-auto space-y-4 pr-2 scrollbar-hide">
-        {ROOMS.map((room) => (
+        {rooms.map((room) => (
           <RoomCard key={room.id} room={room} />
         ))}
       </div>
@@ -162,8 +93,13 @@ export default function BookingRoomCard() {
   );
 }
 
-function RoomCard({ room }: { room: Room }) {
+function RoomCard({ room }: { room: RoomWithPackages }) {
   const [bedChoice, setBedChoice] = useState<string>("Single Bed");
+
+  const amenitiesWithIcons = room.amenities.map(a => ({
+    icon: getAmenityIcon(a.name),
+    label: a.name
+  }));
 
   return (
     <article
@@ -183,7 +119,7 @@ function RoomCard({ room }: { room: Room }) {
         <div className="flex flex-col gap-5">
           <div className="relative rounded-[22px] overflow-hidden aspect-[4/3]">
             <Image
-              src={room.image}
+              src={room.image_url || '/images/placeholder.jpg'}
               alt={room.name}
               fill
               className="object-cover"
@@ -191,7 +127,7 @@ function RoomCard({ room }: { room: Room }) {
           </div>
 
           <ul className="space-y-2 text-sm">
-            {room.amenities.map((a, idx) => (
+            {amenitiesWithIcons.map((a, idx) => (
               <li
                 key={idx}
                 className="flex items-center gap-3 text-[13px] md:text-[14px]"
@@ -215,31 +151,38 @@ function RoomCard({ room }: { room: Room }) {
               </h3>
               <div className="mt-2 flex items-center gap-2 text-xs md:text-sm opacity-90">
                 <FaUserFriends className="text-sm" />
-                <span>{room.maxOccupancy}</span>
+                <span>{room.ideal_for}</span>
               </div>
 
               {/* bed options */}
               <div className="mt-3 flex flex-wrap gap-4 text-xs md:text-sm">
-                <BedOption
-                  label="Single Bed"
-                  selected={bedChoice === "Single Bed"}
-                  onSelect={() => setBedChoice("Single Bed")}
-                />
-                <BedOption
-                  label="Twin Bed"
-                  twin
-                  selected={bedChoice === "Twin Bed"}
-                  onSelect={() => setBedChoice("Twin Bed")}
-                />
-                <BedOption
-                  label="Extra Bed"
-                  selected={bedChoice === "Extra Bed"}
-                  onSelect={() => setBedChoice("Extra Bed")}
-                />
+                {room.bed_types.toLowerCase().includes('king') && (
+                  <BedOption
+                    label="King Bed"
+                    selected={bedChoice === "King Bed"}
+                    onSelect={() => setBedChoice("King Bed")}
+                  />
+                )}
+                {room.bed_types.toLowerCase().includes('twin') && (
+                  <BedOption
+                    label="Twin Bed"
+                    twin
+                    selected={bedChoice === "Twin Bed"}
+                    onSelect={() => setBedChoice("Twin Bed")}
+                  />
+                )}
+                {room.interconnect && (
+                  <BedOption
+                    label="Extra Bed"
+                    selected={bedChoice === "Extra Bed"}
+                    onSelect={() => setBedChoice("Extra Bed")}
+                  />
+                )}
               </div>
 
               <button
                 type="button"
+                onClick={() => window.location.href = `/rooms/${room.id}`}
                 className="mt-3 text-xs md:text-sm underline underline-offset-2"
               >
                 Room Details
@@ -247,8 +190,7 @@ function RoomCard({ room }: { room: Room }) {
             </div>
 
             <div className="text-right text-xs md:text-sm opacity-80">
-              {room.sizeLabel}
-              <span className="align-super text-[9px] md:text-[10px]">²</span>
+              {room.size}
             </div>
           </div>
 
@@ -257,72 +199,100 @@ function RoomCard({ room }: { room: Room }) {
 
           {/* PACKAGES */}
           <div className="flex-1 flex flex-col gap-6 text-[13px] md:text-[14px]">
-            {room.packages.map((pkg, idx) => (
-              <div key={idx} className={idx > 0 ? "pt-4" : ""}>
-                {/* main row: left = text, right = price + Add */}
-                <div className="flex flex-col md:flex-row md:items-stretch md:justify-between gap-4 md:gap-6">
-                  {/* left content */}
-                  <div className="flex-1">
-                    <h4 className="font-semibold">{pkg.name}</h4>
-
-                    <div className="mt-1 text-[12px] md:text-[13px]">
-                      <span className="text-white/80">or </span>
-                      <span className="text-[#23b54a] font-semibold">
-                        {pkg.points} points
-                      </span>
-                      <span className="text-white/80"> per night</span>
-                    </div>
-
-                    <ul className="mt-2 space-y-1.5 list-disc list-inside leading-relaxed">
-                      {pkg.bullets.map((b, i) => (
-                        <li key={i}>{b}</li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  {/* right side: price + Add (desktop aligned with last bullet, mobile row with button on right) */}
-                  <div
-                    className="
-                      mt-4 flex w-full items-center justify-between
-                      md:mt-0 md:flex-col md:w-auto md:items-end md:justify-between
-                      gap-3 md:gap-0
-                    "
-                  >
-                    <div className="text-left md:text-right whitespace-nowrap">
-                      {pkg.originalPrice && (
-                        <div className="text-[12px] md:text-[13px] line-through opacity-70">
-                          {pkg.originalPrice}
-                        </div>
-                      )}
-                      <div className="text-[13px] md:text-[14px] text-[#e23c2c] font-semibold">
-                        {pkg.price}
-                      </div>
-                    </div>
-
-                    <button
-                      type="button"
-                      className="
-                        rounded-full border border-white 
-                        px-8 py-2 text-sm font-medium 
-                        hover:bg-white hover:text-black 
-                        transition
-                      "
-                    >
-                      Add
-                    </button>
-                  </div>
-                </div>
-
-                {/* divider between packages */}
-                {idx !== room.packages.length - 1 && (
-                  <div className="mt-5 h-px w-full bg-white/18" />
-                )}
+            {room.packages && room.packages.length > 0 ? (
+              room.packages.map((pkg, idx) => (
+                <PackageCard
+                  key={pkg.id}
+                  pkg={pkg}
+                  isLast={idx === room.packages.length - 1}
+                  roomId={room.id}
+                />
+              ))
+            ) : (
+              <div className="text-center text-white/60 py-4">
+                No packages available for this room
               </div>
-            ))}
+            )}
           </div>
         </div>
       </div>
     </article>
+  );
+}
+
+function PackageCard({ 
+  pkg, 
+  isLast, 
+  roomId 
+}: { 
+  pkg: Package; 
+  isLast: boolean;
+  roomId: number;
+}) {
+  const handleAddToCart = async () => {
+    // TODO: Implement add to cart functionality
+    console.log('Adding to cart:', { roomId, packageId: pkg.id });
+    // You can call your cart API here
+  };
+
+  return (
+    <div className={!isLast ? "pb-6" : ""}>
+      <div className="flex flex-col md:flex-row md:items-stretch md:justify-between gap-4 md:gap-6">
+        {/* left content */}
+        <div className="flex-1">
+          <div className="flex items-center gap-2">
+            <h4 className="font-semibold">{pkg.name}</h4>
+            {pkg.is_member_only && (
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-yellow-500/20 text-yellow-300 border border-yellow-500/30">
+                Members Only
+              </span>
+            )}
+          </div>
+
+          {pkg.description && (
+            <p className="mt-1 text-xs text-white/70">{pkg.description}</p>
+          )}
+
+          <div className="mt-1 text-[12px] md:text-[13px]">
+            <span className="text-white/80">or </span>
+            <span className="text-[#23b54a] font-semibold">
+              {pkg.points.toLocaleString()} points
+            </span>
+            <span className="text-white/80"> per night</span>
+          </div>
+
+          <ul className="mt-2 space-y-1.5 list-disc list-inside leading-relaxed">
+            {pkg.benefits.map((benefit, i) => (
+              <li key={i}>{benefit}</li>
+            ))}
+          </ul>
+        </div>
+
+        {/* right side: price + Add */}
+        <div className="mt-4 flex w-full items-center justify-between md:mt-0 md:flex-col md:w-auto md:items-end md:justify-between gap-3 md:gap-0">
+          <div className="text-left md:text-right whitespace-nowrap">
+            {pkg.original_price && (
+              <div className="text-[12px] md:text-[13px] line-through opacity-70">
+                THB {pkg.original_price.toLocaleString()}
+              </div>
+            )}
+            <div className="text-[13px] md:text-[14px] text-[#e23c2c] font-semibold">
+              THB {pkg.price.toLocaleString()}
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleAddToCart}
+            className="rounded-full border border-white px-8 py-2 text-sm font-medium hover:bg-white hover:text-black transition"
+          >
+            Add
+          </button>
+        </div>
+      </div>
+
+      {!isLast && <div className="mt-5 h-px w-full bg-white/18" />}
+    </div>
   );
 }
 

@@ -2,14 +2,14 @@
 
 import React, { useState } from "react";
 import { FiSearch, FiCalendar, FiChevronRight } from "react-icons/fi";
+import { useRouter, useSearchParams } from "next/navigation";
 
 type LocationOption = string;
 
 const LOCATIONS: LocationOption[] = [
+  "Phuket",
+  "Pattaya",
   "Hua Hin",
-  "Pathum Thani",
-  "Central Bangkok",
-  "Chang Am",
 ];
 
 type DateRange = {
@@ -23,11 +23,27 @@ type Guests = {
   children: number;
 };
 
-export default function Roomsbar() {
+interface RoomsbarProps {
+  onSearch?: (params: {
+    location: string;
+    checkIn: Date | null;
+    checkOut: Date | null;
+    guests: Guests;
+  }) => void;
+}
+
+export default function Roomsbar({ onSearch }: RoomsbarProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
   /* ---------- LOCATION ---------- */
   const [locationOpen, setLocationOpen] = useState(false);
-  const [locationQuery, setLocationQuery] = useState("Hua Hin");
-  const [location, setLocation] = useState("Hua Hin");
+  const [locationQuery, setLocationQuery] = useState(
+    searchParams.get('destination') || "Phuket"
+  );
+  const [location, setLocation] = useState(
+    searchParams.get('destination') || "Phuket"
+  );
 
   const filteredLocations = LOCATIONS.filter((loc) =>
     loc.toLowerCase().includes(locationQuery.toLowerCase())
@@ -36,8 +52,12 @@ export default function Roomsbar() {
   /* ---------- DATES ---------- */
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [range, setRange] = useState<DateRange>({
-    checkIn: null,
-    checkOut: null,
+    checkIn: searchParams.get('checkIn') 
+      ? new Date(searchParams.get('checkIn')!) 
+      : null,
+    checkOut: searchParams.get('checkOut')
+      ? new Date(searchParams.get('checkOut')!)
+      : null,
   });
 
   const [currentMonth, setCurrentMonth] = useState(() => {
@@ -119,9 +139,9 @@ export default function Roomsbar() {
   /* ---------- GUESTS & ROOMS ---------- */
   const [guestsOpen, setGuestsOpen] = useState(false);
   const [guests, setGuests] = useState<Guests>({
-    rooms: 1,
-    adults: 2,
-    children: 1,
+    rooms: parseInt(searchParams.get('rooms') || '1'),
+    adults: parseInt(searchParams.get('adults') || '2'),
+    children: parseInt(searchParams.get('children') || '0'),
   });
 
   function changeGuest(
@@ -142,8 +162,39 @@ export default function Roomsbar() {
     guests.children ? ` & ${guests.children} Kid` : ""
   }\n${guests.rooms > 1 ? `${guests.rooms} Rooms` : "1 Room"}`;
 
-  /* ---------- JSX ---------- */
+  /* ---------- SEARCH HANDLER ---------- */
+  function handleSearch() {
+    // Build query params
+    const params = new URLSearchParams();
+    
+    params.set('destination', location);
+    
+    if (range.checkIn) {
+      params.set('checkIn', range.checkIn.toISOString().split('T')[0]);
+    }
+    if (range.checkOut) {
+      params.set('checkOut', range.checkOut.toISOString().split('T')[0]);
+    }
+    
+    params.set('rooms', guests.rooms.toString());
+    params.set('adults', guests.adults.toString());
+    params.set('children', guests.children.toString());
 
+    // Call parent callback if provided
+    if (onSearch) {
+      onSearch({
+        location,
+        checkIn: range.checkIn,
+        checkOut: range.checkOut,
+        guests,
+      });
+    }
+
+    // Update URL
+    router.push(`/booking/rooms?${params.toString()}`);
+  }
+
+  /* ---------- JSX ---------- */
   return (
     <div className="w-full flex justify-center px-4 md:px-10 pt-10 pb-6">
       <div
@@ -456,6 +507,7 @@ export default function Roomsbar() {
         <div className="col-span-2 md:col-span-1 w-full h-full flex items-center justify-center md:justify-start mt-3 md:mt-0">
           <button
             type="button"
+            onClick={handleSearch}
             className="w-full h-full rounded-2xl md:rounded-[28px] bg-white text-black px-8 md:px-10 py-3 md:py-4 font-semibold 
                        shadow-[0_18px_45px_rgba(0,0,0,0.5)] hover:bg-white/90 
                        hover:-translate-y-[1px] transition-all duration-200"
@@ -469,7 +521,6 @@ export default function Roomsbar() {
 }
 
 /* ---------- helper to render one month grid ---------- */
-
 function renderMonth(
   monthDate: Date,
   range: DateRange,

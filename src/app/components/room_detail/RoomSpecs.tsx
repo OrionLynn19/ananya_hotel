@@ -1,6 +1,12 @@
 "use client";
 import React from "react";
-import { Feature } from "../../../lib/types";
+
+type Feature = {
+  key: string;
+  label: string;
+  value: string;
+  icon: string;
+};
 
 type Props = { features: Feature[] };
 
@@ -12,7 +18,6 @@ export default function RoomSpecs({ features }: Props): JSX.Element {
           key={f.key}
           className="flex items-center bg-white rounded shadow-sm feature-card"
           style={{
-            // Desktop dimensions
             width: "242px",
             height: "80px",
             borderRadius: "46px",
@@ -34,11 +39,12 @@ export default function RoomSpecs({ features }: Props): JSX.Element {
             className="feature-icon"
             style={{ width: "16px", height: "16px" }}
           />
-          <span className="feature-label text-sm">{f.label}</span>
+          <span className="feature-label text-sm font-medium">
+            {f.label}: {f.value}
+          </span>
         </div>
       ))}
 
-      {/* Mobile-specific styles */}
       <style jsx>{`
         @media (max-width: 768px) {
           .feature-card {
@@ -58,14 +64,13 @@ export default function RoomSpecs({ features }: Props): JSX.Element {
           }
 
           .feature-label {
-            font-size: 11px !important;
+            font-size: 9px !important;
             line-height: 1.2 !important;
             white-space: nowrap !important;
             overflow: hidden !important;
             text-overflow: ellipsis !important;
           }
 
-          /* Adjust container gap for mobile */
           div[style*="gap: 16px"] {
             gap: 8px !important;
           }
