@@ -1,14 +1,14 @@
-"use client"; 
-import React, { useState } from 'react';
-import Image from 'next/image';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Pagination } from 'swiper/modules';
-import type { ImageItem } from '../../lib/types';
+"use client";
+import React, { useState } from "react";
+import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Pagination } from "swiper/modules";
+import type { ImageItem } from "../../../lib/types";
 
 // Import Swiper styles
-import 'swiper/css';
-import 'swiper/css/pagination';
+import "swiper/css";
+import "swiper/css/pagination";
 
 type Props = {
   images: ImageItem[];
@@ -19,7 +19,11 @@ export default function RoomGallery({ images, title }: Props): JSX.Element {
   const [activeIndex, setActiveIndex] = useState<number>(0);
 
   if (!images || images.length === 0) {
-    return <div className="h-64 bg-gray-100 flex items-center justify-center">No images available</div>;
+    return (
+      <div className="h-64 bg-gray-100 flex items-center justify-center">
+        No images available
+      </div>
+    );
   }
 
   const hero = images[activeIndex];
@@ -40,9 +44,9 @@ export default function RoomGallery({ images, title }: Props): JSX.Element {
           >
             <Image
               src={hero.url}
-              alt={hero.alt ?? title ?? 'Room image'}
+              alt={hero.alt ?? title ?? "Room image"}
               fill
-              style={{ objectFit: 'cover' }}
+              style={{ objectFit: "cover" }}
               priority
               sizes="100vw"
             />
@@ -53,20 +57,23 @@ export default function RoomGallery({ images, title }: Props): JSX.Element {
         <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-black/60 via-black/30 to-transparent pointer-events-none" />
 
         {/* Thumbnail Container Overlay */}
-        <div 
+        <div
           className="absolute left-0 right-0 pointer-events-none"
           style={{
             bottom: 0,
-            height: '184.08px',
-            background: 'rgba(70, 50, 20, 0.15)',
-            paddingTop: '24px',
-            paddingBottom: '24px',
-            paddingLeft: '348px',
-            paddingRight: '348px',
+            height: "184.08px",
+            background: "rgba(70, 50, 20, 0.15)",
+            paddingTop: "24px",
+            paddingBottom: "24px",
+            paddingLeft: "348px",
+            paddingRight: "348px",
           }}
         >
           {/* Thumbnail Overlay */}
-          <div className="flex justify-center pointer-events-auto" style={{ gap: '5.6px' }}>
+          <div
+            className="flex justify-center pointer-events-auto"
+            style={{ gap: "5.6px" }}
+          >
             {displayThumbs.map((img, idx) => {
               const isActive = idx === activeIndex;
               return (
@@ -75,15 +82,15 @@ export default function RoomGallery({ images, title }: Props): JSX.Element {
                   type="button"
                   onClick={() => setActiveIndex(idx)}
                   className={`relative overflow-hidden transition-all duration-300 ${
-                    isActive 
-                      ? 'ring-4 ring-white scale-105 opacity-100' 
-                      : 'opacity-70 hover:opacity-90 hover:scale-105'
+                    isActive
+                      ? "ring-4 ring-white scale-105 opacity-100"
+                      : "opacity-70 hover:opacity-90 hover:scale-105"
                   }`}
                   style={{
-                    width: '138.88px',
-                    height: '136.08px',
-                    borderRadius: '13.44px',
-                    padding: '5.6px',
+                    width: "138.88px",
+                    height: "136.08px",
+                    borderRadius: "13.44px",
+                    padding: "5.6px",
                   }}
                 >
                   <div className="relative w-full h-full rounded-lg overflow-hidden">
@@ -91,14 +98,17 @@ export default function RoomGallery({ images, title }: Props): JSX.Element {
                       src={img.url}
                       alt={img.alt ?? `Thumbnail ${idx + 1}`}
                       fill
-                      style={{ objectFit: 'cover' }}
+                      style={{ objectFit: "cover" }}
                       loading="lazy"
                       sizes="139px"
                     />
                   </div>
-                  
+
                   {isActive && (
-                    <div className="absolute inset-0 border-2 border-white" style={{ borderRadius: '13.44px' }} />
+                    <div
+                      className="absolute inset-0 border-2 border-white"
+                      style={{ borderRadius: "13.44px" }}
+                    />
                   )}
                 </button>
               );
@@ -133,9 +143,9 @@ export default function RoomGallery({ images, title }: Props): JSX.Element {
                   src={img.url}
                   alt={img.alt ?? title ?? `Slide ${idx + 1}`}
                   fill
-                  style={{ objectFit: 'cover' }}
+                  style={{ objectFit: "cover" }}
                   priority={idx === 0}
-                  loading={idx === 0 ? 'eager' : 'lazy'}
+                  loading={idx === 0 ? "eager" : "lazy"}
                   sizes="100vw"
                 />
               </div>

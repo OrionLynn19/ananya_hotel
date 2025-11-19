@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 
+
 export default function SignInPage() {
   const router = useRouter();
   const font = {
@@ -148,7 +149,7 @@ export default function SignInPage() {
               Don’t have an account?{" "}
               <button
                 type="button"
-                onClick={() => router.push("/booking/signup")}
+                onClick={() => router.push("/booking/sign-up")}
                 className="underline decoration-white/40 hover:text-white"
                 style={font}
               >
@@ -254,7 +255,7 @@ export default function SignInPage() {
               Don’t have an account?{" "}
               <button
                 type="button"
-                onClick={() => router.push("/booking/signup")}
+                onClick={() => router.push("/booking/sign-up")}
                 className="underline decoration-white/40 hover:text-white"
                 style={font}
               >
