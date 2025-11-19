@@ -1,9 +1,18 @@
 import { NextResponse } from 'next/server';
 import { getAllRooms, createRoom } from '@/app/lib/dbhelper';
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const rooms = await getAllRooms();
+    const { searchParams } = new URL(request.url);
+    
+    const filters = {
+      destination: searchParams.get('destination') || undefined,
+      category: searchParams.get('category') || undefined,
+      minPrice: searchParams.get('minPrice') ? parseFloat(searchParams.get('minPrice')!) : undefined,
+      maxPrice: searchParams.get('maxPrice') ? parseFloat(searchParams.get('maxPrice')!) : undefined,
+    };
+
+    const rooms = await getAllRooms(filters);
     return NextResponse.json(rooms);
   } catch (error) {
     console.error('Error fetching rooms:', error);

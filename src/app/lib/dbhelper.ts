@@ -2,7 +2,8 @@ import { supabase } from './supabase';
 import { 
   Room, 
   Amenity, 
-  RoomWithAmenities, 
+  RoomWithAmenities,
+  RoomFilters,
   Booking, 
   BookingWithDetails, 
   BookingRequest,
@@ -14,8 +15,8 @@ import {
 // ROOM FUNCTIONS
 // ============================================
 
-export async function getAllRooms(): Promise<RoomWithAmenities[]> {
-  const { data: rooms, error } = await supabase
+export async function getAllRooms(filters?: RoomFilters): Promise<RoomWithAmenities[]> {
+  let query = supabase
     .from('rooms')
     .select(`
       *,
@@ -29,12 +30,39 @@ export async function getAllRooms(): Promise<RoomWithAmenities[]> {
     `)
     .eq('available', true);
 
+  // Apply filters
+  if (filters?.destination) {
+    query = query.eq('destination', filters.destination);
+  }
+  
+  if (filters?.category) {
+    query = query.eq('category', filters.category);
+  }
+  
+  if (filters?.minPrice) {
+    query = query.gte('price', filters.minPrice);
+  }
+  
+  if (filters?.maxPrice) {
+    query = query.lte('price', filters.maxPrice);
+  }
+
+  const { data: rooms, error } = await query;
+
   if (error) throw error;
 
   return rooms?.map(room => ({
     ...room,
     amenities: room.room_amenities?.map((ra: any) => ra.amenities) || []
   })) || [];
+}
+
+export async function getRoomsByDestination(destination: string): Promise<RoomWithAmenities[]> {
+  return getAllRooms({ destination });
+}
+
+export async function getRoomsByCategory(category: string): Promise<RoomWithAmenities[]> {
+  return getAllRooms({ category });
 }
 
 export async function getRoomById(id: number): Promise<RoomWithAmenities | null> {
@@ -60,6 +88,32 @@ export async function getRoomById(id: number): Promise<RoomWithAmenities | null>
     ...room,
     amenities: room.room_amenities?.map((ra: any) => ra.amenities) || []
   };
+}
+
+export async function getDestinations(): Promise<string[]> {
+  const { data, error } = await supabase
+    .from('rooms')
+    .select('destination')
+    .eq('available', true);
+
+  if (error) throw error;
+  
+  // Get unique destinations
+  const destinations = [...new Set(data?.map(r => r.destination))];
+  return destinations.filter(Boolean) as string[];
+}
+
+export async function getCategories(): Promise<string[]> {
+  const { data, error } = await supabase
+    .from('rooms')
+    .select('category')
+    .eq('available', true);
+
+  if (error) throw error;
+  
+  // Get unique categories
+  const categories = [...new Set(data?.map(r => r.category))];
+  return categories.filter(Boolean) as string[];
 }
 
 export async function createRoom(room: Omit<Room, 'id' | 'created_at'>): Promise<Room> {

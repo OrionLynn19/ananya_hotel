@@ -1,12 +1,22 @@
 export interface Room {
   id: number;
-  name: string;
+  name: string; // This is "title" in frontend
   description: string | null;
   price: number;
   capacity: number;
   beds: number;
   available: boolean;
   image_url: string | null;
+  
+  // New fields to match frontend
+  destination: string;
+  category: 'Suite Ocean Front Wing' | 'Ocean Front Wing' | 'Deluxe Room';
+  wing_label: string;
+  size: string;
+  ideal_for: string;
+  bed_types: string;
+  interconnect: boolean;
+  
   created_at: string;
 }
 
@@ -23,6 +33,14 @@ export interface RoomAmenity {
 
 export interface RoomWithAmenities extends Room {
   amenities: Amenity[];
+}
+
+// Add type for filtering
+export interface RoomFilters {
+  destination?: string;
+  category?: string;
+  minPrice?: number;
+  maxPrice?: number;
 }
 
 export interface Booking {
