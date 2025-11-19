@@ -10,6 +10,7 @@ import {
   Coupon,
   CartItem
 } from '@/types/db';
+import type { RoomWithPackages } from '@/types/db';
 
 // ============================================
 // ROOM FUNCTIONS
@@ -57,6 +58,40 @@ export async function getAllRooms(filters?: RoomFilters): Promise<RoomWithAmenit
   })) || [];
 }
 
+export async function getAllRoomsWithPackages(): Promise<RoomWithPackages[]> {
+  const { data: rooms, error } = await supabase
+    .from('rooms')
+    .select(`
+      *,
+      room_amenities (
+        amenity_id,
+        amenities (
+          id,
+          name
+        )
+      ),
+      packages (
+        id,
+        name,
+        description,
+        original_price,
+        price,
+        points,
+        benefits,
+        is_member_only
+      )
+    `)
+    .eq('available', true);
+
+  if (error) throw error;
+
+  return rooms?.map(room => ({
+    ...room,
+    amenities: room.room_amenities?.map((ra: any) => ra.amenities) || [],
+    packages: room.packages || []
+  })) || [];
+}
+
 export async function getRoomsByDestination(destination: string): Promise<RoomWithAmenities[]> {
   return getAllRooms({ destination });
 }
@@ -87,6 +122,42 @@ export async function getRoomById(id: number): Promise<RoomWithAmenities | null>
   return {
     ...room,
     amenities: room.room_amenities?.map((ra: any) => ra.amenities) || []
+  };
+}
+
+export async function getRoomWithPackages(id: number): Promise<RoomWithPackages | null> {
+  const { data: room, error } = await supabase
+    .from('rooms')
+    .select(`
+      *,
+      room_amenities (
+        amenity_id,
+        amenities (
+          id,
+          name
+        )
+      ),
+      packages (
+        id,
+        name,
+        description,
+        original_price,
+        price,
+        points,
+        benefits,
+        is_member_only
+      )
+    `)
+    .eq('id', id)
+    .single();
+
+  if (error) throw error;
+  if (!room) return null;
+
+  return {
+    ...room,
+    amenities: room.room_amenities?.map((ra: any) => ra.amenities) || [],
+    packages: room.packages || []
   };
 }
 

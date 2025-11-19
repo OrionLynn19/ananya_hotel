@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Room } from "../data/room.data";
 
 /* ---------- small helpers ---------- */
@@ -84,6 +85,7 @@ const BLUR =
 /* ---------- CARD ---------- */
 export default function RoomCard({ room }: { room: Room }) {
   const [imgLoaded, setImgLoaded] = useState(false);
+  const router = useRouter();
 
   return (
     <article className="rounded-[20px] md:rounded-[28px] bg-white border border-[#efe7db] shadow-sm overflow-hidden">
@@ -151,12 +153,14 @@ export default function RoomCard({ room }: { room: Room }) {
 
             <div className="flex items-center gap-2 shrink-0">
               <button
+                onClick={() => router.push(`/rooms/${room.id}`)}
                 className="rounded-full border border-[#d6c7ad] bg-white text-[#3b2a16] px-4 py-2 text-[13px] font-medium shadow-sm hover:bg-[#fff8ee] transition"
                 type="button"
               >
                 Detail
               </button>
               <button
+                onClick={() => router.push(`/booking/rooms`)}
                 className="rounded-full bg-[#3b2a16] text-white px-5 py-2 text-[13px] font-semibold shadow-[0_6px_16px_rgba(59,42,22,0.25)] hover:translate-y-[-1px] active:translate-y-0 transition"
                 type="button"
               >

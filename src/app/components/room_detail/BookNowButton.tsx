@@ -1,16 +1,28 @@
 "use client";
 import React from 'react';
+import { useRouter } from 'next/navigation';
 
-export default function BookNowButton(): JSX.Element {
+export default function BookNowButton({ roomId }: { roomId?: number }): JSX.Element {
+  const router = useRouter();
+
+  const handleClick = () => {
+    if (roomId) {
+      router.push(`/booking/rooms`);
+    } else {
+      router.push('/rooms');
+    }
+  };
+
   return (
     <>
       <button
+        onClick={handleClick}
         className="book-now-btn hover:scale-105"
         style={{
           width: '261px',
           height: '82px',
           borderRadius: '24px',
-          border: '0.5px solid transparent',
+          border: '1px solid ',
           backgroundImage: 'linear-gradient(white, white), linear-gradient(251.08deg, rgba(70, 50, 20, 0.2) 3.46%, #FFFFFF 51.73%, rgba(70, 50, 20, 0.2) 100%)',
           backgroundOrigin: 'border-box',
           backgroundClip: 'padding-box, border-box',
