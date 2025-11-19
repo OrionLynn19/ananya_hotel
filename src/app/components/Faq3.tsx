@@ -7,18 +7,48 @@ export default function FAQ3() {
     const [email, setEmail] = useState("");
     const [subject, setSubject] = useState("");
     const [message, setMessage] = useState("");
+      const [loading, setLoading] = useState(false); 
 
-    function handleSubmit(e: React.FormEvent) {
-        e.preventDefault();
+ async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (loading) return;
 
-        setFirstName("");
-        setLastName("");
-        setEmail("");
-        setSubject("");
-        setMessage("");
+    setLoading(true);
 
-        alert("Your message has been sent!");
-    };
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          firstName,
+          lastName,
+          email,
+          subject,
+          message,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.message || "Failed to send message.");
+        setLoading(false);
+        return;
+      }
+
+      setFirstName("");
+      setLastName("");
+      setEmail("");
+      setSubject("");
+      setMessage("");
+      alert("Your message has been sent!");
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  }
 
     return (
         <div className="md:bg-[#fcf9f6] bg-white max-w-[90%] md:h-[1030px] h-[510px] rounded-4xl mt-10 mb-20 font-poltawski mx-auto ">
