@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import CartLeft from "../../../components/cart/CartLeft";
 import CartRight from "../../../components/cart/CartRight";
+import MobileCartSummary from "../../../components/cart/MobileCartSummary";
 
 type CartItem = {
   id: string;
@@ -44,7 +45,15 @@ export default function CartPage() {
 
   return (
     <div>
-      <div className="w-[1326px] mx-auto flex flex-col py-16 md:flex-row gap-6 md:gap-[18px] justify-center">
+      <MobileCartSummary
+        items={data.items}
+        summary={summary}
+        onChange={(items, newSummary) =>
+          setData({ items, summary: newSummary })
+        }
+      />
+
+      <div className="hidden md:flex w-full max-w-[1326px] mx-auto box-border flex-col py-16 md:flex-row md:gap-[18px] justify-center">
         <CartLeft items={data.items} />
         <CartRight summary={summary} />
       </div>

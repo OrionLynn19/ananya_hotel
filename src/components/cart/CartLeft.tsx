@@ -24,7 +24,7 @@ type Props = {
 export default function CartLeft({ items }: Props) {
   return (
     <div
-      className="w-full md:w-[867px] bg-linear-to-br from-white/5 to-white/10 backdrop-blur-2xl shadow-lg rounded-[35px] p-4 md:p-10"
+      className="w-full md:flex-1 bg-linear-to-br from-white/5 to-white/10 backdrop-blur-2xl shadow-lg rounded-[35px] p-4 md:p-10"
       style={{
         boxShadow:
           "inset 0 2px 0 rgba(255,255,255,1), inset 0 -2px 0 rgba(255,255,255,1)",
@@ -48,7 +48,6 @@ export default function CartLeft({ items }: Props) {
               <div className="flex-1">
                 <div className="md:w-[747px] md:h-[165px] w-full md:mx-0">
                   <div className="md:grid md:grid-cols-[1fr_auto] md:items-center">
-                    {/* Left block: image + title/beds */}
                     <div className="flex items-center gap-4">
                       <div className="w-20 h-20 md:w-[165px] md:h-[165px] rounded-md overflow-hidden shrink-0">
                         <Image

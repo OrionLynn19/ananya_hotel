@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 type Summary = {
   totalGuests: string;
@@ -12,10 +12,14 @@ type Props = {
   continueHref?: string;
 };
 
-export default function CartRight({ summary, continueHref = "#" }: Props) {
+export default function CartRight({
+  summary,
+  continueHref = "payment",
+}: Props) {
+  const router = useRouter();
   return (
     <aside
-      className="w-full md:w-[441px] md:h-[279px]  bg-linear-to-br from-white/5 to-white/10  backdrop-blur-lg rounded-[35px] p-4 md:p-6"
+      className="w-full md:w-[441px] md:h-[279px] shrink-0 bg-linear-to-br from-white/5 to-white/10  backdrop-blur-lg rounded-[35px] p-4 md:p-6"
       style={{
         boxShadow:
           "inset 0 2px 0 rgba(255,255,255,1), inset 0 -2px 0 rgba(255,255,255,1)",
@@ -42,16 +46,17 @@ export default function CartRight({ summary, continueHref = "#" }: Props) {
           Including taxes and fees
         </div>
 
-        <Link
-          href="/booking/#"
-          className="mt-4 mx-auto block w-[139px] bg-[#463214]/25  text-white px-6 py-3 rounded-[20px] text-center"
+        <button
+          type="button"
+          onClick={() => router.push(continueHref)}
+          className="mt-4 mx-auto block w-[139px] bg-[#463214]/25  text-white px-6 py-3 rounded-[20px] text-center cursor-pointer"
           style={{
             boxShadow:
-              "inset 0 2px 0 rgba(255,255,255,1), inset 0 -2px 0 rgba(255,255,255,1)",
+              "inset 0 1px 0 rgba(255,255,255,1), inset 0 -1px 0 rgba(255,255,255,1)",
           }}
         >
           Continue
-        </Link>
+        </button>
       </div>
     </aside>
   );
