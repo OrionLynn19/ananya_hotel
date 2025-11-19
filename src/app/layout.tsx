@@ -7,7 +7,6 @@ import Navbar from "./components/NavBar";
 import Footer from "./components/Footer";
 import HideNavFooter from "./HideNavFooter";
 
-
 export const metadata: Metadata = {
   title: "ANANYA HOTEL",
   description: "Hotel Project",
@@ -20,10 +19,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-
       <body className="min-h-dvh flex flex-col bg-white text-neutral-900">
-          <HideNavFooter>{children}</HideNavFooter>
-
+        <HideNavFooter>{children}</HideNavFooter>
       </body>
     </html>
   );

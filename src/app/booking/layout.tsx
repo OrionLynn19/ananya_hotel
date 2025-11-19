@@ -273,7 +273,7 @@ export default function BookingLayout({
         )}
 
         {/* 🔹 PAGE CONTENT */}
-        <main className="mx-auto max-w-full px-6 py-10">{children}</main>
+        <main>{children}</main>
       </div>
     </div>
   );
