@@ -209,7 +209,7 @@ function BookingCard({ booking }: { booking: Booking }) {
 
         {/* text */}
         <div className="flex flex-col justify-between flex-1">
-          <div className="flex flex-row items-start justify-between md:gap-2">
+          <div className="flex flex-row items-start justify-between">
             <div className="space-y-2 text-white md:text-[18px] text-[12px]">
               <p className={`pb-2 md:pb-10 ${poltawskiNowy.className} font-bold text-[14px] md:text-[18px]`}>{booking.title}</p>
               <p>
@@ -237,7 +237,7 @@ function BookingCard({ booking }: { booking: Booking }) {
           <div className="mt-4 flex flex-row gap-3 justify-end md:gap-4">
             <button
               className="
-                w-[120px] md:w-auto
+                w-[120px] md:w-auto md:px-3
                 rounded-full border border-white/60
                 bg-gradient-to-r from-white/10 to-white/0
                 px-1 py-2 text-[12px] md:text-[18px] font-medium text-white
@@ -250,7 +250,7 @@ function BookingCard({ booking }: { booking: Booking }) {
 
             <button
               className="
-                w-[80px] md:w-auto
+                w-[80px] md:w-auto md:px-3
                 rounded-full border border-white/60
                 bg-gradient-to-r from-white/10 to-white/0
                 px-2 py-2 text-[12px] md:text-[18px] font-medium text-white
