@@ -4,6 +4,7 @@ import React from "react";
 import PaymentCartSummary from "@/components/cart/PaymentCartSummary";
 import Image from "next/image";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 type CartItem = {
   id: string;
@@ -49,6 +50,8 @@ export default function PaymentPage() {
   const [couponCode, setCouponCode] = useState("");
   const [arrivedBy, setArrivedBy] = useState("");
   const [specialRequest, setSpecialRequest] = useState("");
+
+  const router = useRouter();
 
   const inputClass =
     "text-white md:text-base text-xs placeholder-white/70 w-full h-10 rounded-lg mt-5 bg-[#7c6d58]/12 border backdrop-blur-lg border-[#ffffff]/20 px-3";
@@ -285,7 +288,10 @@ export default function PaymentPage() {
                   </div>
                 </div>
                 <div className="flex justify-center">
-                  <button className="md:hidden bg-[#7c6d58]/30 active:scale-95 transition-transform  inset-shadow-xs inset-shadow-white/50 border backdrop-blur-lg border-[#ffffff]/20 text-white/80 font-medium py-2 px-6 rounded-2xl">
+                  <button
+                    onClick={() => router.push("/booking/confirmed")}
+                    className="md:hidden bg-[#7c6d58]/30 active:scale-95 transition-transform  inset-shadow-xs inset-shadow-white/50 border backdrop-blur-lg border-[#ffffff]/20 text-white/80 font-medium py-2 px-6 rounded-2xl"
+                  >
                     Confirm
                   </button>
                 </div>
