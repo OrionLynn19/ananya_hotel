@@ -161,18 +161,7 @@ export default function PaymentCartSummary({ items, summary }: Props) {
           </div>
 
           <div className="mt-4 flex justify-center">
-            <button
-              onClick={() => {
-                router.push("/booking/confirmed");
-              }}
-              className="w-[139px] text-[18px] font-montserrat font-[500px] bg-[#463214]/25 text-white px-6 py-3 rounded-[20px] text-center cursor-pointer"
-              style={{
-                boxShadow:
-                  "inset 0 1px 0 rgba(255,255,255,1), inset 0 -1px 0 rgba(255,255,255,1)",
-              }}
-            >
-              Confirm
-            </button>
+            
           </div>
         </div>
       </div>

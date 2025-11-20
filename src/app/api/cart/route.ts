@@ -1,10 +1,3 @@
-// import { NextResponse } from "next/server";
-// import { getCartData } from "../../../mocks/cartData";
-
-// export async function GET() {
-//   const data = getCartData();
-//   return NextResponse.json(data);
-// }
 import { NextResponse } from "next/server";
 import {
   addToCart,
@@ -34,45 +27,51 @@ function getOrCreateSessionId(): string {
 export async function GET() {
   try {
     const sessionId = getOrCreateSessionId();
-    const rawItems = (await getCartItems(sessionId)) as DBCartItem[];
+    const rawItems = (await getCartItems(sessionId)) as any[];
+
+    console.log("Raw cart items from DB:", JSON.stringify(rawItems, null, 2));
 
     // Map DB cart items to frontend-friendly shape
-    const items = (rawItems || []).map(
-      (
-        ci: DBCartItem & {
-          room?: {
-            name?: string;
-            image_url?: string;
-            bed_types?: string;
-            destination?: string;
-          };
-        }
-      ) => {
-        const nights = calculateNights(ci.check_in, ci.check_out);
-        const pricePerNight =
-          nights > 0 ? Math.round((ci.price / nights) * 100) / 100 : 0;
-        const beds = ci.room?.bed_types
+    const items = (rawItems || []).map((ci) => {
+      const nights = calculateNights(ci.check_in, ci.check_out);
+      
+      // ✅ Use the stored price (which should already be package_price × nights)
+      const pricePerNight = nights > 0 ? Math.round((ci.price / nights) * 100) / 100 : 0;
+      
+      console.log(`Cart item ${ci.id}:`, {
+        storedPrice: ci.price,
+        nights,
+        pricePerNight,
+        package_id: ci.package_id,
+        packageData: ci.package,
+        bed_type: ci.bed_type,
+        roomData: ci.room
+      });
+      
+      // ✅ Use bed_type from cart_items table (this is what you stored)
+      const beds = ci.bed_type 
+        ? [ci.bed_type]
+        : ci.room?.bed_types
           ? String(ci.room.bed_types)
               .split(",")
               .map((s: string) => s.trim())
-          : [];
+          : ["Standard Bed"];
 
-        return {
-          id: String(ci.id),
-          title: ci.room?.name || `Room ${ci.room_id}`,
-          image: ci.room?.image_url || "",
-          beds,
-          extraBed: false,
-          persons: (ci.adults || 0) + (ci.children || 0),
-          quantity: 1,
-          pricePerNight,
-          startDate: ci.check_in,
-          endDate: ci.check_out,
-          nights,
-          location: ci.room?.destination || "",
-        };
-      }
-    );
+      return {
+        id: String(ci.id),
+        title: ci.room?.name || `Room ${ci.room_id}`,
+        image: ci.room?.image_url || "",
+        beds, // ✅ Now shows "King Bed" or "Twin Bed"
+        extraBed: false,
+        persons: (ci.adults || 0) + (ci.children || 0),
+        quantity: 1,
+        pricePerNight, // ✅ Correct package price per night
+        startDate: ci.check_in,
+        endDate: ci.check_out,
+        nights,
+        location: ci.room?.destination || "",
+      };
+    });
 
     const totalGuests = items.reduce(
       (acc: number, it) => acc + (it.persons || 0),
@@ -82,6 +81,8 @@ export async function GET() {
       (acc: number, it) => acc + (it.price || 0),
       0
     );
+
+    console.log("Cart summary:", { totalGuests, totalCost, itemCount: items.length });
 
     const summary = { totalGuests: `${totalGuests} Adults`, totalCost };
 
@@ -96,8 +97,27 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const sessionId = getOrCreateSessionId();
-    const { room_id, check_in, check_out, adults, children } =
-      await request.json();
+    const { 
+      room_id, 
+      package_id,
+      package_price,
+      bed_type,
+      check_in, 
+      check_out, 
+      adults, 
+      children 
+    } = await request.json();
+
+    console.log("Cart POST received:", { 
+      room_id, 
+      package_id, 
+      package_price, 
+      bed_type, 
+      check_in, 
+      check_out, 
+      adults, 
+      children 
+    });
 
     // Validate input
     if (!room_id || !check_in || !check_out || !adults) {
@@ -113,7 +133,10 @@ export async function POST(request: Request) {
       check_in,
       check_out,
       adults,
-      children || 0
+      children || 0,
+      package_id,
+      package_price,
+      bed_type
     );
 
     const response = NextResponse.json(cartItem, { status: 201 });

@@ -323,10 +323,8 @@ export async function checkRoomCapacity(
 export function calculateNights(checkIn: string, checkOut: string): number {
   const start = new Date(checkIn);
   const end = new Date(checkOut);
-  const nights = Math.ceil(
-    (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
-  );
-  return Math.max(nights, 1);
+  const diff = end.getTime() - start.getTime();
+  return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
 }
 
 export async function validateCoupon(code: string): Promise<Coupon | null> {
@@ -630,69 +628,147 @@ export async function addToCart(
   checkIn: string,
   checkOut: string,
   adults: number,
-  children: number
+  children: number = 0,
+  packageId?: number,
+  packagePrice?: number,
+  bedType?: string
 ): Promise<CartItem> {
-  // Validate
-  if (adults < 1) {
-    throw new Error("At least 1 adult is required");
+  console.log("addToCart called with:", {
+    sessionId,
+    roomId,
+    checkIn,
+    checkOut,
+    adults,
+    children,
+    packageId,
+    packagePrice,
+    bedType
+  });
+
+  const nights = calculateNights(checkIn, checkOut);
+  const EXTRA_BED_PRICE = 800; // THB per night
+
+  let totalPrice: number;
+
+  if (packagePrice && nights > 0) {
+    // Base package price
+    totalPrice = packagePrice * nights;
+    
+    // ✅ Add extra bed charge if selected
+    if (bedType === "Extra Bed") {
+      totalPrice += EXTRA_BED_PRICE * nights;
+      console.log(`✅ Extra bed added: ${EXTRA_BED_PRICE} × ${nights} nights = ${EXTRA_BED_PRICE * nights}`);
+      console.log(`✅ Total: ${packagePrice * nights} (package) + ${EXTRA_BED_PRICE * nights} (extra bed) = ${totalPrice}`);
+    } else {
+      console.log(`✅ Using package price: ${packagePrice} × ${nights} nights = ${totalPrice}`);
+    }
+  } else if (packageId) {
+    const { data: pkg, error: pkgError } = await supabase
+      .from('packages')
+      .select('price')
+      .eq('id', packageId)
+      .single();
+    
+    if (pkgError) {
+      console.error("Error fetching package:", pkgError);
+      throw pkgError;
+    }
+    
+    totalPrice = (pkg?.price || 0) * nights;
+    
+    if (bedType === "Extra Bed") {
+      totalPrice += EXTRA_BED_PRICE * nights;
+    }
+    
+    console.log(`Package price from DB: ${pkg?.price} × ${nights} nights = ${totalPrice}`);
+  } else {
+    const { data: room, error: roomError } = await supabase
+      .from('rooms')
+      .select('price')
+      .eq('id', roomId)
+      .single();
+    
+    if (roomError) {
+      console.error("Error fetching room:", roomError);
+      throw roomError;
+    }
+    
+    totalPrice = (room?.price || 0) * nights;
+    
+    if (bedType === "Extra Bed") {
+      totalPrice += EXTRA_BED_PRICE * nights;
+    }
+    
+    console.log(`Room base price: ${room?.price} × ${nights} nights = ${totalPrice}`);
   }
 
-  // Check capacity
-  const capacityCheck = await checkRoomCapacity(roomId, adults, children);
-  if (!capacityCheck.isValid) {
-    throw new Error(capacityCheck.message || "Room capacity exceeded");
-  }
+  const insertData = {
+    session_id: sessionId,
+    room_id: roomId,
+    package_id: packageId || null,
+    bed_type: bedType || null,
+    check_in: checkIn,
+    check_out: checkOut,
+    adults,
+    children,
+    price: totalPrice, // ✅ This includes extra bed cost
+  };
 
-  // Get room price
-  const room = await getRoomById(roomId);
-  if (!room) throw new Error("Room not found");
-
-  const totalNights = calculateNights(checkIn, checkOut);
-  const price = room.price * totalNights;
+  console.log("Inserting into cart_items:", insertData);
 
   const { data, error } = await supabase
-    .from("cart_items")
-    .insert({
-      session_id: sessionId,
-      room_id: roomId,
-      check_in: checkIn,
-      check_out: checkOut,
-      adults,
-      children,
-      price,
-    })
+    .from('cart_items')
+    .insert(insertData)
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {
+    console.error("❌ Database error adding to cart:", error);
+    throw error;
+  }
+  
+  console.log("✅ Cart item saved successfully:", data);
   return data;
 }
 
 export async function getCartItems(sessionId: string): Promise<CartItem[]> {
   const { data, error } = await supabase
     .from("cart_items")
-    .select(
-      `
+    .select(`
       *,
-      rooms (
+      room:rooms!cart_items_room_id_fkey (
         id,
         name,
         image_url,
-        capacity,
         bed_types,
         destination,
         price
+      ),
+      package:packages!cart_items_package_id_fkey (
+        id,
+        name,
+        price,
+        points,
+        benefits
       )
-    `
-    )
-    .eq("session_id", sessionId);
+    `)
+    .eq("session_id", sessionId)
+    .order("created_at", { ascending: false });
 
-  if (error) throw error;
+  if (error) {
+    console.error("Error fetching cart items:", error);
+    throw error;
+  }
+
+  console.log("Cart items from DB:", JSON.stringify(data, null, 2));
   return data || [];
 }
 
-export async function removeFromCart(id: number): Promise<void> {
-  const { error } = await supabase.from("cart_items").delete().eq("id", id);
+export async function removeFromCart(cartItemId: number): Promise<void> {
+  const { error } = await supabase
+    .from("cart_items")
+    .delete()
+    .eq("id", cartItemId);
 
   if (error) throw error;
 }
