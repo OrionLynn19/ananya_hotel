@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 
 type Currency = {
   code: string;
@@ -21,9 +22,15 @@ export default function BookingLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+  const isCartOpen = pathname?.startsWith("/booking/cart");
+  const mobileCartIcon = isCartOpen
+    ? "/Images/cartIcons/closecart.png"
+    : "/Images/cartIcons/cart.png";
   const [currency, setCurrency] = useState<Currency>(CURRENCIES[0]);
   const [openCurrency, setOpenCurrency] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const router = useRouter();
 
   return (
     <div className="min-h-screen text-white overflow-x-hidden">
@@ -68,19 +75,36 @@ export default function BookingLayout({
 
               {/* Right: round cart button (no THB here) */}
               <div className="flex w-10 justify-end">
-                <Link
-                  href="/booking/cart"
-                  aria-label="Cart"
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-white/70 bg-transparent"
-                >
-                  <Image
-                    src="/Images/cart.png"
-                    alt="Cart"
-                    width={18}
-                    height={18}
-                    className="object-contain"
-                  />
-                </Link>
+                {isCartOpen ? (
+                  <button
+                    type="button"
+                    aria-label="Close cart"
+                    onClick={() => router.back()}
+                    className="flex h-9 w-9 items-center justify-center rounded-full bg-transparent"
+                  >
+                    <Image
+                      src={mobileCartIcon}
+                      alt="Close cart"
+                      width={24}
+                      height={24}
+                      className="object-contain"
+                    />
+                  </button>
+                ) : (
+                  <Link
+                    href="/booking/cart"
+                    aria-label="Cart"
+                    className="flex h-9 w-9 items-center justify-center rounded-full bg-transparent"
+                  >
+                    <Image
+                      src={mobileCartIcon}
+                      alt="Cart"
+                      width={24}
+                      height={24}
+                      className="object-contain"
+                    />
+                  </Link>
+                )}
               </div>
             </div>
 
@@ -217,24 +241,42 @@ export default function BookingLayout({
                     <span>{currency.label}</span>
                   </div>
 
-                  <Link
-                    href="/booking/cart"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    aria-label="Cart"
-                    className="flex h-9 w-9 items-center justify-center rounded-full border border-white/70"
-                  >
-                    <Image
-                      src="/Images/cart.png"
-                      alt="Cart"
-                      width={18}
-                      height={18}
-                      className="object-contain"
-                    />
-                  </Link>
+                  {isCartOpen ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        router.back();
+                      }}
+                      aria-label="Close cart"
+                      className="flex h-9 w-9 items-center justify-center rounded-full"
+                    >
+                      <Image
+                        src={mobileCartIcon}
+                        alt="Close cart"
+                        width={24}
+                        height={24}
+                        className="object-contain"
+                      />
+                    </button>
+                  ) : (
+                    <Link
+                      href="/booking/cart"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      aria-label="Cart"
+                      className="flex h-9 w-9 items-center justify-center rounded-full"
+                    >
+                      <Image
+                        src={mobileCartIcon}
+                        alt="Cart"
+                        width={24}
+                        height={24}
+                        className="object-contain"
+                      />
+                    </Link>
+                  )}
                 </div>
               </div>
-
-              {/* Menu links */}
               <nav className="mt-16 flex flex-col items-start gap-6 text-lg text-white">
                 <Link
                   href="/"

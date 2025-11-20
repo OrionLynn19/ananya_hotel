@@ -106,27 +106,53 @@ export default function MobileCartSummary({ items, summary, onChange }: Props) {
                 {isEditing && (
                   <button
                     aria-label={`Remove ${item.title}`}
-                    onClick={() => {
-                      const remaining = localItems.filter(
-                        (i) => i.id !== item.id
-                      );
-                      setLocalItems(remaining);
-                      const totalGuests = remaining.reduce(
-                        (acc, it) => acc + (it.persons || 0),
-                        0
-                      );
-                      const totalCost = remaining.reduce((acc, it) => {
-                        const room = it.pricePerNight * (it.nights || 1);
-                        const extra = it.extraBed ? 800 * (it.nights || 1) : 0;
-                        return acc + room + extra;
-                      }, 0);
-                      const newSummary = {
-                        totalGuests: `${totalGuests} Adults`,
-                        totalCost,
-                      };
-                      if (typeof onChange === "function")
-                        onChange(remaining, newSummary);
-                      if (remaining.length === 0) setIsEditing(false);
+                    onClick={async () => {
+                      try {
+                        const res = await fetch(
+                          `/api/cart?id=${encodeURIComponent(item.id)}`,
+                          { method: "DELETE" }
+                        );
+                        if (!res.ok) {
+                          const err = await res.json().catch(() => ({}));
+                          alert(err?.error || "Failed to remove item");
+                          return;
+                        }
+
+                        // broadcast update so other components re-fetch
+                        try {
+                          window.dispatchEvent(new CustomEvent("cart-updated"));
+                        } catch {
+                          const ev = document.createEvent("Event");
+                          ev.initEvent("cart-updated", true, true);
+                          window.dispatchEvent(ev);
+                        }
+
+                        const remaining = localItems.filter(
+                          (i) => i.id !== item.id
+                        );
+                        setLocalItems(remaining);
+                        const totalGuests = remaining.reduce(
+                          (acc, it) => acc + (it.persons || 0),
+                          0
+                        );
+                        const totalCost = remaining.reduce((acc, it) => {
+                          const room = it.pricePerNight * (it.nights || 1);
+                          const extra = it.extraBed
+                            ? 800 * (it.nights || 1)
+                            : 0;
+                          return acc + room + extra;
+                        }, 0);
+                        const newSummary = {
+                          totalGuests: `${totalGuests} Adults`,
+                          totalCost,
+                        };
+                        if (typeof onChange === "function")
+                          onChange(remaining, newSummary);
+                        if (remaining.length === 0) setIsEditing(false);
+                      } catch (err) {
+                        console.error("Error removing cart item", err);
+                        alert("Error removing item. Please try again.");
+                      }
                     }}
                     className="absolute -top-7 -right-4 p-1 w-8 h-8 flex items-center justify-center cursor-pointer"
                   >

@@ -697,7 +697,7 @@ export default function Booking() {
               <div className="flex-shrink-0" style={{ minWidth: 180 }}>
                 <button
                   type="button"
-                  onClick={() => router.push("/booking/my-bookings")}
+                  onClick={() => router.push("/booking/rooms")}
                   className="w-full rounded-2xl text-2xl px-6 py-3 border border-white/90 bg-white/5 backdrop-blur-sm text-white hover:opacity-95 min-[1600px]:px-10 min-[1600px]:py-7 min-[1600px]:min-w-[220px] cursor-pointer hover:bg-white/10"
                   style={font}
                 >
@@ -1094,7 +1094,7 @@ export default function Booking() {
             <div className="mb-1">&nbsp;</div>
             <button
               type="button"
-              onClick={() => router.push("/booking/my-bookings")}
+              onClick={() => router.push("/booking/rooms")}
               className="w-full rounded-lg border border-white/90 bg-white/5 backdrop-blur-sm px-3 py-3 text-white text-xs hover:bg-white/10"
               style={font}
             >

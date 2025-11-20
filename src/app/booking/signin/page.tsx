@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 
-
 export default function SignInPage() {
   const router = useRouter();
   const font = {
@@ -19,7 +18,7 @@ export default function SignInPage() {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      router.push("/booking/my-bookings");
+      router.push("/booking/payment");
     }, 1200);
   }
 

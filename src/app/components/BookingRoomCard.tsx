@@ -25,12 +25,13 @@ function getAmenityIcon(name: string): JSX.Element {
   };
   return iconMap[name] || <FiWifi />;
 }
-
+import BookingModal from "@/components/cart/BookingModalClean";
 export default function BookingRoomCard() {
   const searchParams = useSearchParams();
   const [rooms, setRooms] = useState<RoomWithPackages[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const [showModal, setShowModal] = useState(false);
   useEffect(() => {
     async function fetchRooms() {
       try {
@@ -88,14 +89,25 @@ export default function BookingRoomCard() {
     <section className="w-full flex justify-start px-4 md:px-0">
       <div className="w-full max-h-[720px] overflow-y-auto space-y-4 pr-2 scrollbar-hide">
         {rooms.map((room) => (
-          <RoomCard key={room.id} room={room} />
+          <RoomCard
+            key={room.id}
+            room={room}
+            onOpenBooking={() => setShowModal(true)}
+          />
         ))}
       </div>
+      <BookingModal open={showModal} onClose={() => setShowModal(false)} />
     </section>
   );
 }
 
-function RoomCard({ room }: { room: RoomWithPackages }) {
+function RoomCard({
+  room,
+  onOpenBooking,
+}: {
+  room: RoomWithPackages;
+  onOpenBooking?: () => void;
+}) {
   const [bedChoice, setBedChoice] = useState<string>("Single Bed");
 
   const amenitiesWithIcons = room.amenities.map((a) => ({
@@ -206,6 +218,7 @@ function RoomCard({ room }: { room: RoomWithPackages }) {
                   pkg={pkg}
                   isLast={idx === room.packages.length - 1}
                   roomId={room.id}
+                  onOpenBooking={onOpenBooking}
                 />
               ))
             ) : (
@@ -224,10 +237,12 @@ function PackageCard({
   pkg,
   isLast,
   roomId,
+  onOpenBooking,
 }: {
   pkg: Package;
   isLast: boolean;
   roomId: number;
+  onOpenBooking?: () => void;
 }) {
   const handleAddToCart = async () => {
     try {
@@ -273,7 +288,7 @@ function PackageCard({
       // success — notify other parts of the app to refresh cart
       try {
         window.dispatchEvent(new CustomEvent("cart-updated"));
-      } catch (e) {
+      } catch {
         // older browsers
         const ev = document.createEvent("Event");
         ev.initEvent("cart-updated", true, true);
@@ -281,11 +296,30 @@ function PackageCard({
       }
 
       // optional: show a quick feedback
-      // eslint-disable-next-line no-console
       console.log("Added to cart", await res.json().catch(() => ({})));
     } catch (error) {
       console.error("Error adding to cart", error);
       alert("Error adding to cart");
+    }
+  };
+
+  const handleOpenBooking = async () => {
+    try {
+      const res = await fetch("/api/cart");
+      if (!res.ok) {
+        alert("Unable to check cart. Please try again.");
+        return;
+      }
+      const data = await res.json().catch(() => ({}));
+      const items = data?.items || [];
+      if (!items || items.length === 0) {
+        alert("Your cart is empty. Please add a room before booking.");
+        return;
+      }
+      if (onOpenBooking) onOpenBooking();
+    } catch (err) {
+      console.error("Error checking cart before booking", err);
+      alert("Error checking cart. Please try again.");
     }
   };
 
@@ -335,13 +369,23 @@ function PackageCard({
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={handleAddToCart}
-            className="rounded-full border border-white px-8 py-2 text-sm font-medium hover:bg-white hover:text-black transition"
-          >
-            Add
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={handleAddToCart}
+              className="rounded-full border border-white px-6 py-2 text-sm font-medium hover:bg-white hover:text-black transition"
+            >
+              Add
+            </button>
+
+            <button
+              type="button"
+              onClick={handleOpenBooking}
+              className="md:hidden rounded-full border border-white px-4 py-2 text-sm font-medium hover:bg-white hover:text-black transition"
+            >
+              Book
+            </button>
+          </div>
         </div>
       </div>
 
