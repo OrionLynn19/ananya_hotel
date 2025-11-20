@@ -28,35 +28,68 @@ export default function CartPage() {
 
   useEffect(() => {
     let mounted = true;
-    fetch("/api/cart")
-      .then((r) => r.json())
-      .then((json) => {
-        if (mounted) setData(json);
-      })
-      .catch((e) => console.error(e));
+
+    async function fetchCart() {
+      try {
+        const res = await fetch("/api/cart");
+        const json = await res.json();
+        if (mounted) {
+          setData(json);
+        }
+      } catch (err) {
+        console.error("Failed to fetch cart", err);
+      }
+    }
+
+    fetchCart();
+
+    const handleCartUpdate = () => {
+      fetchCart();
+    };
+
+    window.addEventListener("cart-updated", handleCartUpdate);
+
     return () => {
       mounted = false;
+      window.removeEventListener("cart-updated", handleCartUpdate);
     };
   }, []);
 
-  if (!data) return <div className="p-8">Loading cart…</div>;
+  if (!data || !data.summary) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-white text-xl">Loading cart...</div>
+      </div>
+    );
+  }
 
-  const summary = data.summary ?? { totalGuests: "0", totalCost: 0 };
+  if (data.items.length === 0) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center text-white">
+          <h2 className="text-2xl font-bold mb-2">Your cart is empty</h2>
+          <p className="text-white/70">Add some rooms to get started!</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <MobileCartSummary
-        items={data.items}
-        summary={summary}
-        onChange={(items, newSummary) =>
-          setData({ items, summary: newSummary })
-        }
-      />
+    <main className="min-h-screen p-4 md:p-8">
+      <div className="max-w-[1440px] mx-auto">
+        <div className="flex flex-col md:flex-row gap-6">
+          <CartLeft items={data.items} />
+          <CartRight 
+            summary={data.summary} 
+            items={data.items}
+            continueHref="payment"
+          />
+        </div>
 
-      <div className="hidden md:flex w-full max-w-[1326px] mx-auto box-border flex-col py-16 md:flex-row md:gap-[18px] justify-center">
-        <CartLeft items={data.items} />
-        <CartRight summary={summary} />
+        <div className="md:hidden mt-6">
+          <MobileCartSummary summary={data.summary} />
+        </div>
       </div>
-    </div>
+    </main>
   );
 }

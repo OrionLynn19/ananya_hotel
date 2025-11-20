@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Montserrat, Poltawski_Nowy } from "next/font/google";
 
 const montserrat = Montserrat({
@@ -31,124 +31,13 @@ type Booking = {
   location: string;
   imageSrc: string;
   status: BookingStatus;
+  bookingItems?: Array<{
+    roomName: string;
+    bedType: string | null;
+    nights: number;
+    subtotal: number;
+  }>;
 };
-
-const BOOKINGS: Booking[] = [
-  {
-    id: "1907534578",
-    title: "Gallery Suite",
-    tag: "Upcoming",
-    amount: 2900,
-    currency: "THB",
-    guests: 3,
-    rooms: 1,
-    startDate: "4, Sep, 2025",
-    endDate: "19, Sep, 2025",
-    location: "Bangkok",
-    imageSrc: "/images/rooms/gallery-suite.jpg",
-    status: "IN_PROGRESS",
-  },
-  {
-    id: "1907534278",
-    title: "Urban Nest",
-    tag: "Payment Pending",
-    amount: 2100,
-    currency: "THB",
-    guests: 3,
-    rooms: 1,
-    startDate: "16, Sep, 2025",
-    endDate: "19, Sep, 2025",
-    location: "Hua Hin",
-    imageSrc: "/images/rooms/urban-nest.jpg",
-    status: "IN_PROGRESS",
-  },
-
-  {
-    id: "1907534578-C1",
-    title: "Urban Nest",
-    tag: "Completed",
-    amount: 2900,
-    currency: "THB",
-    guests: 3,
-    rooms: 1,
-    startDate: "4, Sep, 2025",
-    endDate: "19, Sep, 2025",
-    location: "Bangkok",
-    imageSrc: "/images/rooms/urban-nest.jpg",
-    status: "COMPLETED",
-  },
-  {
-    id: "1907534278-C1",
-    title: "Urban Nest",
-    tag: "Completed",
-    amount: 2100,
-    currency: "THB",
-    guests: 3,
-    rooms: 1,
-    startDate: "16, Sep, 2025",
-    endDate: "19, Sep, 2025",
-    location: "Hua Hin",
-    imageSrc: "/images/rooms/urban-nest.jpg",
-    status: "COMPLETED",
-  },
-  {
-    id: "1907534578-C2",
-    title: "Gallery Suite",
-    tag: "Completed",
-    amount: 2900,
-    currency: "THB",
-    guests: 3,
-    rooms: 1,
-    startDate: "4, Sep, 2025",
-    endDate: "19, Sep, 2025",
-    location: "Bangkok",
-    imageSrc: "/images/rooms/gallery-suite.jpg",
-    status: "COMPLETED",
-  },
-  {
-    id: "1907534278-C2",
-    title: "Superior Comfort",
-    tag: "Completed",
-    amount: 2100,
-    currency: "THB",
-    guests: 3,
-    rooms: 1,
-    startDate: "16, Sep, 2025",
-    endDate: "19, Sep, 2025",
-    location: "Hua Hin",
-    imageSrc: "/images/rooms/superior-comfort.jpg",
-    status: "COMPLETED",
-  },
-
-  {
-    id: "1907534578-X1",
-    title: "Urban Nest",
-    tag: "Cancelled",
-    amount: 2900,
-    currency: "THB",
-    guests: 3,
-    rooms: 1,
-    startDate: "4, Sep, 2025",
-    endDate: "19, Sep, 2025",
-    location: "Bangkok",
-    imageSrc: "/images/rooms/urban-nest.jpg",
-    status: "CANCELLED",
-  },
-  {
-    id: "1907534278-X1",
-    title: "Gallery Suite",
-    tag: "Cancelled",
-    amount: 2100,
-    currency: "THB",
-    guests: 3,
-    rooms: 1,
-    startDate: "16, Sep, 2025",
-    endDate: "19, Sep, 2025",
-    location: "Hua Hin",
-    imageSrc: "/images/rooms/gallery-suite.jpg",
-    status: "CANCELLED",
-  },
-];
 
 const STATUS_TABS: { id: BookingStatus; label: string }[] = [
   { id: "IN_PROGRESS", label: "Progress" },
@@ -211,9 +100,12 @@ function BookingCard({ booking }: { booking: Booking }) {
         <div className="flex flex-col justify-between flex-1">
           <div className="flex flex-row items-start justify-between">
             <div className="space-y-2 text-white md:text-[18px] text-[12px]">
-              <p className={`pb-2 md:pb-10 ${poltawskiNowy.className} font-bold text-[14px] md:text-[18px]`}>{booking.title}</p>
+              <p className={`pb-2 md:pb-10 ${poltawskiNowy.className} font-bold text-[14px] md:text-[18px]`}>
+                {booking.title}
+                {booking.rooms > 1 && ` + ${booking.rooms - 1} more`}
+              </p>
               <p>
-                {booking.guests} guests&nbsp;&nbsp;&nbsp;{booking.rooms} room
+                {booking.guests} guests&nbsp;&nbsp;&nbsp;{booking.rooms} {booking.rooms === 1 ? 'room' : 'rooms'}
               </p>
               <p>
                 {booking.startDate} - {booking.endDate}
@@ -269,10 +161,31 @@ function BookingCard({ booking }: { booking: Booking }) {
 
 export default function MyBookingsPage() {
   const [activeStatus, setActiveStatus] = useState<BookingStatus>("IN_PROGRESS");
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchBookings() {
+      try {
+        const response = await fetch("/api/bookings/my-bookings");
+        const data = await response.json();
+        
+        if (data.bookings) {
+          setBookings(data.bookings);
+        }
+      } catch (error) {
+        console.error("Failed to fetch bookings:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchBookings();
+  }, []);
 
   const filteredBookings = useMemo(
-    () => BOOKINGS.filter((b) => b.status === activeStatus),
-    [activeStatus]
+    () => bookings.filter((b) => b.status === activeStatus),
+    [bookings, activeStatus]
   );
 
   return (
@@ -379,11 +292,28 @@ export default function MyBookingsPage() {
               </button>
             </div>
 
-            <div className="grid gap-5 md:gap-6 md:grid-cols-2">
-              {filteredBookings.map((booking) => (
-                <BookingCard key={booking.id} booking={booking} />
-              ))}
-            </div>
+            {loading ? (
+              <div className="flex items-center justify-center py-20">
+                <div className="text-white text-xl">Loading bookings...</div>
+              </div>
+            ) : filteredBookings.length === 0 ? (
+              <div className="flex items-center justify-center py-20">
+                <div className="text-center text-white">
+                  <p className="text-xl mb-2">No bookings found</p>
+                  <p className="text-white/70">
+                    {activeStatus === "IN_PROGRESS" && "You don't have any active bookings yet."}
+                    {activeStatus === "COMPLETED" && "You haven't completed any bookings yet."}
+                    {activeStatus === "CANCELLED" && "You don't have any cancelled bookings."}
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="grid gap-5 md:gap-6 md:grid-cols-2">
+                {filteredBookings.map((booking) => (
+                  <BookingCard key={booking.id} booking={booking} />
+                ))}
+              </div>
+            )}
           </div>
         </section>
       </div>

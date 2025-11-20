@@ -25,17 +25,18 @@ function getAmenityIcon(name: string): JSX.Element {
   };
   return iconMap[name] || <FiWifi />;
 }
+
 import BookingModal from "@/components/cart/BookingModalClean";
+
 export default function BookingRoomCard() {
   const searchParams = useSearchParams();
   const [rooms, setRooms] = useState<RoomWithPackages[]>([]);
   const [loading, setLoading] = useState(true);
-
   const [showModal, setShowModal] = useState(false);
+
   useEffect(() => {
     async function fetchRooms() {
       try {
-        // Build API URL with search params
         const params = new URLSearchParams();
 
         const destination = searchParams.get("destination");
@@ -108,7 +109,7 @@ function RoomCard({
   room: RoomWithPackages;
   onOpenBooking?: () => void;
 }) {
-  const [bedChoice, setBedChoice] = useState<string>("Single Bed");
+  const [bedChoice, setBedChoice] = useState<string>("King Bed");
 
   const amenitiesWithIcons = room.amenities.map((a) => ({
     icon: getAmenityIcon(a.name),
@@ -129,8 +130,8 @@ function RoomCard({
       "
     >
       <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1.05fr)_minmax(0,2fr)] gap-6 md:gap-8">
-        {/* LEFT: image + amenities */}
-        <div className="flex flex-col gap-5">
+        {/* LEFT SIDE - Image & Amenities */}
+        <div className="flex flex-col">
           <div className="relative rounded-[22px] overflow-hidden aspect-[4/3]">
             <Image
               src={room.image_url || "/images/placeholder.jpg"}
@@ -140,7 +141,7 @@ function RoomCard({
             />
           </div>
 
-          <ul className="space-y-2 text-sm">
+          <ul className="mt-4 space-y-2 text-sm">
             {amenitiesWithIcons.map((a, idx) => (
               <li
                 key={idx}
@@ -155,7 +156,7 @@ function RoomCard({
           </ul>
         </div>
 
-        {/* RIGHT: details + packages */}
+        {/* RIGHT SIDE - Details & Packages */}
         <div className="flex flex-col">
           {/* header */}
           <div className="flex items-start justify-between gap-4">
@@ -218,6 +219,8 @@ function RoomCard({
                   pkg={pkg}
                   isLast={idx === room.packages.length - 1}
                   roomId={room.id}
+                  room={room}
+                  bedChoice={bedChoice}
                   onOpenBooking={onOpenBooking}
                 />
               ))
@@ -237,40 +240,57 @@ function PackageCard({
   pkg,
   isLast,
   roomId,
+  room,
+  bedChoice,
   onOpenBooking,
 }: {
   pkg: Package;
   isLast: boolean;
   roomId: number;
+  room: RoomWithPackages;
+  bedChoice: string;
   onOpenBooking?: () => void;
 }) {
+  const [adding, setAdding] = useState(false);
+
   const handleAddToCart = async () => {
     try {
-      // read search params for dates and guests
-      // use `window.location.search` as a fallback if hook not available here
+      setAdding(true);
+
       const params = new URLSearchParams(window.location.search);
-      const checkIn =
-        params.get("checkIn") ||
-        params.get("check_in") ||
-        new Date().toISOString().slice(0, 10);
-      const checkOut =
-        params.get("checkOut") ||
-        params.get("check_out") ||
-        (() => {
-          const d = new Date();
-          d.setDate(d.getDate() + 1);
-          return d.toISOString().slice(0, 10);
-        })();
-      const adults = parseInt(params.get("adults") || "1", 10) || 1;
-      const children = parseInt(params.get("children") || "0", 10) || 0;
+      const checkIn = params.get("checkIn");
+      const checkOut = params.get("checkOut");
+      const adults = parseInt(params.get("adults") || "2", 10);
+      const children = parseInt(params.get("children") || "0", 10);
+
+      if (!checkIn || !checkOut) {
+        alert("⚠️ Please select check-in and check-out dates from the search bar above!");
+        return;
+      }
+
+      const checkInDate = new Date(checkIn);
+      const checkOutDate = new Date(checkOut);
+      const nights = Math.ceil((checkOutDate.getTime() - checkInDate.getTime()) / (1000 * 60 * 60 * 24));
+
+      if (nights < 1) {
+        alert("⚠️ Check-out date must be after check-in date!");
+        return;
+      }
 
       const payload = {
         room_id: roomId,
+        package_id: pkg.id,
+        package_name: pkg.name,
+        package_price: pkg.price,
+        bed_type: bedChoice,
         check_in: checkIn,
         check_out: checkOut,
         adults,
         children,
+        nights,
       };
+
+      console.log("📦 Sending to cart API:", payload);
 
       const res = await fetch("/api/cart", {
         method: "POST",
@@ -285,42 +305,21 @@ function PackageCard({
         return;
       }
 
-      // success — notify other parts of the app to refresh cart
-      try {
-        window.dispatchEvent(new CustomEvent("cart-updated"));
-      } catch {
-        // older browsers
-        const ev = document.createEvent("Event");
-        ev.initEvent("cart-updated", true, true);
-        window.dispatchEvent(ev);
-      }
+      const result = await res.json();
+      console.log("✅ Cart response:", result);
 
-      // optional: show a quick feedback
-      console.log("Added to cart", await res.json().catch(() => ({})));
+      window.dispatchEvent(new CustomEvent("cart-updated"));
+      alert("✅ Added to cart!");
     } catch (error) {
       console.error("Error adding to cart", error);
-      alert("Error adding to cart");
+      alert("❌ Error adding to cart");
+    } finally {
+      setAdding(false);
     }
   };
 
-  const handleOpenBooking = async () => {
-    try {
-      const res = await fetch("/api/cart");
-      if (!res.ok) {
-        alert("Unable to check cart. Please try again.");
-        return;
-      }
-      const data = await res.json().catch(() => ({}));
-      const items = data?.items || [];
-      if (!items || items.length === 0) {
-        alert("Your cart is empty. Please add a room before booking.");
-        return;
-      }
-      if (onOpenBooking) onOpenBooking();
-    } catch (err) {
-      console.error("Error checking cart before booking", err);
-      alert("Error checking cart. Please try again.");
-    }
+  const handleOpenBooking = () => {
+    if (onOpenBooking) onOpenBooking();
   };
 
   return (
@@ -367,15 +366,17 @@ function PackageCard({
             <div className="text-[13px] md:text-[14px] text-[#e23c2c] font-semibold">
               THB {pkg.price.toLocaleString()}
             </div>
+            <div className="text-[10px] opacity-60 mt-1">per night</div>
           </div>
 
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={handleAddToCart}
-              className="rounded-full border border-white px-6 py-2 text-sm font-medium hover:bg-white hover:text-black transition"
+              disabled={adding}
+              className="rounded-full border border-white px-6 py-2 text-sm font-medium hover:bg-white hover:text-black transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Add
+              {adding ? "Adding..." : "Add"}
             </button>
 
             <button
@@ -396,28 +397,31 @@ function PackageCard({
 
 function BedOption({
   label,
-  twin,
   selected,
+  twin,
   onSelect,
 }: {
   label: string;
-  twin?: boolean;
   selected: boolean;
+  twin?: boolean;
   onSelect: () => void;
 }) {
   return (
     <button
       type="button"
       onClick={onSelect}
-      className="inline-flex items-center gap-1.5 text-xs md:text-sm"
+      className={`
+        flex items-center gap-2 text-xs
+        ${selected ? "font-medium" : "opacity-70"}
+      `}
     >
-      <span
-        className={`h-3 w-3 rounded-full mr-1 border ${
-          selected ? "bg-white border-white" : "border-white/70"
-        }`}
-      />
-      <FaBed className="text-[11px]" />
-      {twin && <FaBed className="text-[11px]" />}
+      <FaBed className="text-base" />
+      {twin ? (
+        <span className="flex gap-1">
+          <FaBed className="text-[10px]" />
+          <FaBed className="text-[10px]" />
+        </span>
+      ) : null}
       <span>{label}</span>
     </button>
   );
