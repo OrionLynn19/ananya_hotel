@@ -17,45 +17,46 @@ import type { RoomWithPackages, Package } from "@/types/db";
 // Map amenity names to icons
 function getAmenityIcon(name: string): JSX.Element {
   const iconMap: Record<string, JSX.Element> = {
-    'Wifi': <FiWifi />,
-    'Parking': <FaCarAlt />,
-    'Pool': <FaSwimmingPool />,
-    'Pet Friendly': <FaDog />,
-    'No Smoking': <FaSmokingBan />,
+    Wifi: <FiWifi />,
+    Parking: <FaCarAlt />,
+    Pool: <FaSwimmingPool />,
+    "Pet Friendly": <FaDog />,
+    "No Smoking": <FaSmokingBan />,
   };
   return iconMap[name] || <FiWifi />;
 }
-
+import BookingModal from "@/components/cart/BookingModalClean";
 export default function BookingRoomCard() {
   const searchParams = useSearchParams();
   const [rooms, setRooms] = useState<RoomWithPackages[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const [showModal, setShowModal] = useState(false);
   useEffect(() => {
     async function fetchRooms() {
       try {
         // Build API URL with search params
         const params = new URLSearchParams();
-        
-        const destination = searchParams.get('destination');
-        const checkIn = searchParams.get('checkIn');
-        const checkOut = searchParams.get('checkOut');
-        const roomsCount = searchParams.get('rooms');
-        const adults = searchParams.get('adults');
-        const children = searchParams.get('children');
 
-        if (destination) params.set('destination', destination);
-        if (checkIn) params.set('checkIn', checkIn);
-        if (checkOut) params.set('checkOut', checkOut);
-        if (roomsCount) params.set('rooms', roomsCount);
-        if (adults) params.set('adults', adults);
-        if (children) params.set('children', children);
+        const destination = searchParams.get("destination");
+        const checkIn = searchParams.get("checkIn");
+        const checkOut = searchParams.get("checkOut");
+        const roomsCount = searchParams.get("rooms");
+        const adults = searchParams.get("adults");
+        const children = searchParams.get("children");
+
+        if (destination) params.set("destination", destination);
+        if (checkIn) params.set("checkIn", checkIn);
+        if (checkOut) params.set("checkOut", checkOut);
+        if (roomsCount) params.set("rooms", roomsCount);
+        if (adults) params.set("adults", adults);
+        if (children) params.set("children", children);
 
         const response = await fetch(`/api/booking/rooms?${params}`);
         const data = await response.json();
         setRooms(data);
       } catch (error) {
-        console.error('Error fetching rooms:', error);
+        console.error("Error fetching rooms:", error);
       } finally {
         setLoading(false);
       }
@@ -65,7 +66,7 @@ export default function BookingRoomCard() {
 
   if (loading) {
     return (
-      <section className="w-full flex justify-center px-4 md:px-8 py-10">
+      <section className="w-full flex justify-center px-4 md:px-0">
         <div className="text-white">Loading rooms...</div>
       </section>
     );
@@ -73,32 +74,45 @@ export default function BookingRoomCard() {
 
   if (rooms.length === 0) {
     return (
-      <section className="w-full flex justify-center px-4 md:px-8 py-10">
+      <section className="w-full flex justify-center px-4 md:px-0">
         <div className="text-white text-center">
           <p className="text-lg mb-2">No rooms found</p>
-          <p className="text-sm opacity-70">Try adjusting your search criteria</p>
+          <p className="text-sm opacity-70">
+            Try adjusting your search criteria
+          </p>
         </div>
       </section>
     );
   }
 
   return (
-    <section className="w-full flex justify-start px-4 md:px-8 py-10">
-      <div className="w-full md:w-[70%] max-h-[720px] overflow-y-auto space-y-4 pr-2 scrollbar-hide">
+    <section className="w-full flex justify-start px-4 md:px-0">
+      <div className="w-full max-h-[720px] overflow-y-auto space-y-4 pr-2 scrollbar-hide">
         {rooms.map((room) => (
-          <RoomCard key={room.id} room={room} />
+          <RoomCard
+            key={room.id}
+            room={room}
+            onOpenBooking={() => setShowModal(true)}
+          />
         ))}
       </div>
+      <BookingModal open={showModal} onClose={() => setShowModal(false)} />
     </section>
   );
 }
 
-function RoomCard({ room }: { room: RoomWithPackages }) {
+function RoomCard({
+  room,
+  onOpenBooking,
+}: {
+  room: RoomWithPackages;
+  onOpenBooking?: () => void;
+}) {
   const [bedChoice, setBedChoice] = useState<string>("Single Bed");
 
-  const amenitiesWithIcons = room.amenities.map(a => ({
+  const amenitiesWithIcons = room.amenities.map((a) => ({
     icon: getAmenityIcon(a.name),
-    label: a.name
+    label: a.name,
   }));
 
   return (
@@ -119,7 +133,7 @@ function RoomCard({ room }: { room: RoomWithPackages }) {
         <div className="flex flex-col gap-5">
           <div className="relative rounded-[22px] overflow-hidden aspect-[4/3]">
             <Image
-              src={room.image_url || '/images/placeholder.jpg'}
+              src={room.image_url || "/images/placeholder.jpg"}
               alt={room.name}
               fill
               className="object-cover"
@@ -146,9 +160,7 @@ function RoomCard({ room }: { room: RoomWithPackages }) {
           {/* header */}
           <div className="flex items-start justify-between gap-4">
             <div>
-              <h3 className="text-lg md:text-xl font-semibold">
-                {room.name}
-              </h3>
+              <h3 className="text-lg md:text-xl font-semibold">{room.name}</h3>
               <div className="mt-2 flex items-center gap-2 text-xs md:text-sm opacity-90">
                 <FaUserFriends className="text-sm" />
                 <span>{room.ideal_for}</span>
@@ -156,14 +168,14 @@ function RoomCard({ room }: { room: RoomWithPackages }) {
 
               {/* bed options */}
               <div className="mt-3 flex flex-wrap gap-4 text-xs md:text-sm">
-                {room.bed_types.toLowerCase().includes('king') && (
+                {room.bed_types.toLowerCase().includes("king") && (
                   <BedOption
                     label="King Bed"
                     selected={bedChoice === "King Bed"}
                     onSelect={() => setBedChoice("King Bed")}
                   />
                 )}
-                {room.bed_types.toLowerCase().includes('twin') && (
+                {room.bed_types.toLowerCase().includes("twin") && (
                   <BedOption
                     label="Twin Bed"
                     twin
@@ -182,7 +194,7 @@ function RoomCard({ room }: { room: RoomWithPackages }) {
 
               <button
                 type="button"
-                onClick={() => window.location.href = `/rooms/${room.id}`}
+                onClick={() => (window.location.href = `/rooms/${room.id}`)}
                 className="mt-3 text-xs md:text-sm underline underline-offset-2"
               >
                 Room Details
@@ -206,6 +218,7 @@ function RoomCard({ room }: { room: RoomWithPackages }) {
                   pkg={pkg}
                   isLast={idx === room.packages.length - 1}
                   roomId={room.id}
+                  onOpenBooking={onOpenBooking}
                 />
               ))
             ) : (
@@ -220,19 +233,94 @@ function RoomCard({ room }: { room: RoomWithPackages }) {
   );
 }
 
-function PackageCard({ 
-  pkg, 
-  isLast, 
-  roomId 
-}: { 
-  pkg: Package; 
+function PackageCard({
+  pkg,
+  isLast,
+  roomId,
+  onOpenBooking,
+}: {
+  pkg: Package;
   isLast: boolean;
   roomId: number;
+  onOpenBooking?: () => void;
 }) {
   const handleAddToCart = async () => {
-    // TODO: Implement add to cart functionality
-    console.log('Adding to cart:', { roomId, packageId: pkg.id });
-    // You can call your cart API here
+    try {
+      // read search params for dates and guests
+      // use `window.location.search` as a fallback if hook not available here
+      const params = new URLSearchParams(window.location.search);
+      const checkIn =
+        params.get("checkIn") ||
+        params.get("check_in") ||
+        new Date().toISOString().slice(0, 10);
+      const checkOut =
+        params.get("checkOut") ||
+        params.get("check_out") ||
+        (() => {
+          const d = new Date();
+          d.setDate(d.getDate() + 1);
+          return d.toISOString().slice(0, 10);
+        })();
+      const adults = parseInt(params.get("adults") || "1", 10) || 1;
+      const children = parseInt(params.get("children") || "0", 10) || 0;
+
+      const payload = {
+        room_id: roomId,
+        check_in: checkIn,
+        check_out: checkOut,
+        adults,
+        children,
+      };
+
+      const res = await fetch("/api/cart", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        console.error("Failed to add to cart", err);
+        alert(err?.error || "Failed to add to cart");
+        return;
+      }
+
+      // success — notify other parts of the app to refresh cart
+      try {
+        window.dispatchEvent(new CustomEvent("cart-updated"));
+      } catch {
+        // older browsers
+        const ev = document.createEvent("Event");
+        ev.initEvent("cart-updated", true, true);
+        window.dispatchEvent(ev);
+      }
+
+      // optional: show a quick feedback
+      console.log("Added to cart", await res.json().catch(() => ({})));
+    } catch (error) {
+      console.error("Error adding to cart", error);
+      alert("Error adding to cart");
+    }
+  };
+
+  const handleOpenBooking = async () => {
+    try {
+      const res = await fetch("/api/cart");
+      if (!res.ok) {
+        alert("Unable to check cart. Please try again.");
+        return;
+      }
+      const data = await res.json().catch(() => ({}));
+      const items = data?.items || [];
+      if (!items || items.length === 0) {
+        alert("Your cart is empty. Please add a room before booking.");
+        return;
+      }
+      if (onOpenBooking) onOpenBooking();
+    } catch (err) {
+      console.error("Error checking cart before booking", err);
+      alert("Error checking cart. Please try again.");
+    }
   };
 
   return (
@@ -281,13 +369,23 @@ function PackageCard({
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={handleAddToCart}
-            className="rounded-full border border-white px-8 py-2 text-sm font-medium hover:bg-white hover:text-black transition"
-          >
-            Add
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={handleAddToCart}
+              className="rounded-full border border-white px-6 py-2 text-sm font-medium hover:bg-white hover:text-black transition"
+            >
+              Add
+            </button>
+
+            <button
+              type="button"
+              onClick={handleOpenBooking}
+              className="md:hidden rounded-full border border-white px-4 py-2 text-sm font-medium hover:bg-white hover:text-black transition"
+            >
+              Book
+            </button>
+          </div>
         </div>
       </div>
 
