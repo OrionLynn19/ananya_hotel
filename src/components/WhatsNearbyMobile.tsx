@@ -400,6 +400,8 @@ export default function WhatsNearbyMobile() {
                 key={selectedCity}
                 ref={scrollerRef}
                 className="w-full h-[185px] flex gap-2 overflow-x-auto scroll-smooth hide-scrollbar"
+                style={{ touchAction: "none" }}
+                onTouchStart={(e) => e.preventDefault()}
               >
                 {displayedCards.map((c: Card, i: number) => (
                   <div
