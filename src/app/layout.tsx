@@ -1,16 +1,11 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import "swiper/css";
+import "swiper/css/effect-coverflow"; // Crucial for the 3D depth effect
+import "swiper/css/pagination";
+import Navbar from "./components/NavBar";
+import Footer from "./components/Footer";
+import HideNavFooter from "./HideNavFooter";
 
 export const metadata: Metadata = {
   title: "ANANYA HOTEL",
@@ -19,15 +14,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
+      <body className="min-h-dvh flex flex-col bg-white text-neutral-900">
+        <HideNavFooter>{children}</HideNavFooter>
       </body>
     </html>
   );

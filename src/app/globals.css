@@ -1,26 +1,60 @@
+@import url("https://fonts.googleapis.com/css2?family=Poltawski+Nowy:wght@400;500;700&family=Montserrat:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
-}
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-montserrat: "Montserrat", sans-serif;
+  --font-poltawski: "Poltawski Nowy", serif;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #ffffff;
+    --foreground: #171717;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-montserrat);
+}
+
+.font-mont {
+  font-family: var(--font-montserrat) !important;
+}
+.font-poltawski {
+  font-family: var(--font-poltawski) !important;
+}
+
+.swiper-pagination-custom-mobile .swiper-pagination-bullet {
+  width: 12px;            /* increase dot size */
+  height: 12px;
+  background-color: #D4CFC9; /* inactive dot color */
+  opacity: 1;             /* keep them visible */
+  margin: 0 4px;          /* spacing between dots */
+  border-radius: 9999px;  /* make them fully round */
+  transition: all 0.3s ease;
+}
+
+.swiper-pagination-custom-mobile .swiper-pagination-bullet-active {
+  width: 14px;            /* slightly larger active dot */
+  height: 14px;
+  background-color: #463214; /* active dot color */
+}
+
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  scrollbar-width: none;
 }
